@@ -23,7 +23,9 @@
       "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-en.json http://localhost:3137/api/translate -w \"\\\\nstatus: %{http_code} time: %{time_total}s\\\\n\")",
       "Bash(brew install *)",
       "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-resume.json http://localhost:3137/api/pdf -o /tmp/a3.pdf -w \"pdf: %{http_code} size=%{size_download}\\\\n\")",
-      "Bash(sips -s format png /tmp/a3.pdf --out /tmp/a3.png)"
+      "Bash(sips -s format png /tmp/a3.pdf --out /tmp/a3.png)",
+      "Bash(npm view *)",
+      "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-resume.json http://localhost:3137/api/pdf -o /tmp/v2.pdf -w \"pdf: %{http_code} size=%{size_download}\\\\n\")"
     ],
     "additionalDirectories": [
       "/tmp",
