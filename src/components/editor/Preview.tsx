@@ -1,53 +1,57 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { RirekishoSheet } from "@/components/rirekisho/RirekishoSheet";
+import { Sheet } from "@/components/rirekisho/Sheet";
 import type { Resume } from "@/lib/schema";
+import { TEMPLATES, type TemplateKey } from "@/lib/templates";
 
 interface Props {
   data: Resume;
-  fitWidth?: boolean;
+  template: TemplateKey;
 }
 
-// A3 landscape at 96dpi: 420mm × 297mm = 1587 × 1123 px.
-const SHEET_WIDTH_PX = 1587;
-const SHEET_HEIGHT_PX = 1123;
+const PX_PER_MM = 96 / 25.4;
 
-export function Preview({ data, fitWidth }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.4);
+/**
+ * Renders the sheet at its natural mm-derived pixel size and scales it
+ * down to fit the parent's width. The wrapper occupies the scaled box so
+ * the layout doesn't reserve the full 1587px the un-scaled sheet would.
+ */
+export function Preview({ data, template }: Props) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const meta = TEMPLATES[template];
+  const sheetW = meta.widthMm * PX_PER_MM;
+  const sheetH = meta.heightMm * PX_PER_MM;
+  const [scale, setScale] = useState(0.5);
 
   useEffect(() => {
-    if (!fitWidth) return;
-    const el = containerRef.current;
+    const el = wrapperRef.current;
     if (!el) return;
     const update = () => {
-      const w = el.clientWidth - 16;
-      setScale(Math.min(1, w / SHEET_WIDTH_PX));
+      const w = el.clientWidth;
+      if (w > 0) setScale(Math.min(1, w / sheetW));
     };
     update();
     const obs = new ResizeObserver(update);
     obs.observe(el);
     return () => obs.disconnect();
-  }, [fitWidth]);
+  }, [sheetW]);
 
   return (
-    <div ref={containerRef} className="space-y-4">
+    <div ref={wrapperRef} className="w-full">
       <div
-        style={{
-          width: SHEET_WIDTH_PX * scale,
-          height: SHEET_HEIGHT_PX * scale + 8,
-          position: "relative",
-        }}
+        className="mx-auto shadow-2xl bg-white"
+        style={{ width: sheetW * scale, height: sheetH * scale }}
       >
         <div
           style={{
-            width: SHEET_WIDTH_PX,
+            width: sheetW,
+            height: sheetH,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
           }}
         >
-          <RirekishoSheet data={data} />
+          <Sheet template={template} data={data} />
         </div>
       </div>
     </div>

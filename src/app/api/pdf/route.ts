@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
 import puppeteer, { type Browser } from "puppeteer";
 import { ResumeSchema } from "@/lib/schema";
+import { TEMPLATES, type TemplateKey } from "@/lib/templates";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 /**
  * Generates a PDF of the rirekisho by:
- *   1. Encoding the resume into a base64 query param
- *   2. Loading /preview?data=<...> in headless Chromium
+ *   1. Encoding the resume + template into the preview URL
+ *   2. Loading /preview in headless Chromium
  *   3. Waiting for the client to mark window.__rirekishoReady
- *   4. Printing to PDF at A4 portrait, no margin (the sheet supplies its own)
+ *   4. Printing to PDF at the paper size declared by the template
  *
  * Browser instance is reused across requests for warm starts.
  */
@@ -44,18 +45,28 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid resume shape" }, { status: 400 });
   }
 
+  const rawTemplate = (body as { template?: string }).template;
+  const template: TemplateKey =
+    rawTemplate && rawTemplate in TEMPLATES ? (rawTemplate as TemplateKey) : "jis-a3";
+  const meta = TEMPLATES[template];
+
   const json = JSON.stringify(parsed.data);
   const encoded = Buffer.from(json, "utf-8").toString("base64");
 
   const origin = originFromRequest(req);
-  const url = `${origin}/preview?data=${encodeURIComponent(encoded)}`;
+  const url = `${origin}/preview?template=${template}&data=${encodeURIComponent(encoded)}`;
 
   const browser = await getBrowser();
   const page = await browser.newPage();
 
   try {
-    // A3 landscape ≈ 1587×1123 CSS pixels at 96dpi.
-    await page.setViewport({ width: 1587, height: 1123, deviceScaleFactor: 2 });
+    // Set viewport to the sheet's pixel size at 96dpi so layout matches print.
+    const px = (mm: number) => Math.round((mm / 25.4) * 96);
+    await page.setViewport({
+      width: px(meta.widthMm),
+      height: px(meta.heightMm),
+      deviceScaleFactor: 2,
+    });
     await page.goto(url, { waitUntil: "networkidle0", timeout: 30_000 });
     await page.waitForFunction(
       "window.__rirekishoReady === true",
@@ -65,8 +76,8 @@ export async function POST(req: Request) {
     await page.evaluateHandle("document.fonts.ready");
 
     const pdf = await page.pdf({
-      format: "A3",
-      landscape: true,
+      format: meta.paper,
+      landscape: meta.orientation === "landscape",
       printBackground: true,
       margin: { top: "0", right: "0", bottom: "0", left: "0" },
       preferCSSPageSize: true,
@@ -90,6 +101,5 @@ export async function POST(req: Request) {
 
 function originFromRequest(req: Request): string {
   const url = new URL(req.url);
-  // In dev/prod we hit ourselves on the same host:port.
   return `${url.protocol}//${url.host}`;
 }

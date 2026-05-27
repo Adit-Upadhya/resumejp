@@ -2,24 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { RirekishoSheet } from "@/components/rirekisho/RirekishoSheet";
+import { Sheet } from "@/components/rirekisho/Sheet";
 import { emptyResume, type Resume } from "@/lib/schema";
 import { loadResume } from "@/lib/storage";
+import { TEMPLATES, type TemplateKey, loadTemplate } from "@/lib/templates";
 import "@/components/rirekisho/sheet.css";
 import "@/components/rirekisho/print.css";
 
 /**
- * Renders the resume at real size (210mm wide) with print CSS applied.
+ * Renders the resume at real size with print CSS applied.
  *
- * Puppeteer fetches `/preview?data=<base64-json>`; if the param is present we
- * decode it. Otherwise we read the user's autosaved data from localStorage,
- * which lets people open this page directly to see a full-size preview.
+ * Puppeteer fetches `/preview?data=<base64-json>&template=<key>`. If `data`
+ * is absent we fall back to localStorage so users can open this page
+ * directly for a full-size browser preview.
  */
 export function PrintPreviewClient() {
   const params = useSearchParams();
   const [data, setData] = useState<Resume | null>(null);
+  const [template, setTemplate] = useState<TemplateKey>("jis-a3");
 
   useEffect(() => {
+    const t = (params.get("template") as TemplateKey | null) ?? loadTemplate();
+    setTemplate(t in TEMPLATES ? t : "jis-a3");
+
     const encoded = params.get("data");
     if (encoded) {
       try {
@@ -38,8 +43,15 @@ export function PrintPreviewClient() {
       // Signal to Puppeteer that render is done. waitForFunction polls this.
       (window as unknown as { __rirekishoReady?: boolean }).__rirekishoReady = true;
     }
-  }, [data]);
+  }, [data, template]);
 
   if (!data) return null;
-  return <RirekishoSheet data={data} />;
+  const meta = TEMPLATES[template];
+  const pageSize = `${meta.paper} ${meta.orientation}`;
+  return (
+    <>
+      <style>{`@page { size: ${pageSize}; margin: 0; }`}</style>
+      <Sheet template={template} data={data} />
+    </>
+  );
 }

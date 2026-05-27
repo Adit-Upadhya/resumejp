@@ -1,8 +1,6 @@
-/* Page rules used only when Puppeteer prints the sheet. A3 landscape, no margin. */
-@page {
-  size: A3 landscape;
-  margin: 0;
-}
+/* Base print rules shared by every template. The actual @page size is
+   injected at runtime by PrintPreviewClient using a <style> tag, because
+   CSS @page rules can't be conditional. */
 html,
 body {
   margin: 0;

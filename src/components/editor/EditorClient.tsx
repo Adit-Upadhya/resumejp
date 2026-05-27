@@ -5,40 +5,84 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronRight,
   Download,
-  FileJson,
-  FileText,
+  Edit3,
   Loader2,
   Save,
   Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocalResume } from "@/lib/storage";
+import { TEMPLATES } from "@/lib/templates";
+import { useTemplate } from "@/lib/templates-hook";
 import { PersonalForm } from "./forms/PersonalForm";
 import { EducationForm } from "./forms/EducationForm";
 import { WorkForm } from "./forms/WorkForm";
 import { LicensesForm } from "./forms/LicensesForm";
 import { ExtrasForm } from "./forms/ExtrasForm";
+import { TemplatePicker } from "./TemplatePicker";
 import { Preview } from "./Preview";
 import { translateResume } from "@/lib/translate-client";
 import { sampleResume } from "@/lib/sample";
 import { toast } from "sonner";
 import "@/components/rirekisho/sheet.css";
 
-type SectionKey = "personal" | "education" | "work" | "licenses" | "extras";
+type StepKey =
+  | "template"
+  | "personal"
+  | "education"
+  | "work"
+  | "licenses"
+  | "extras"
+  | "preview";
+
+interface Step {
+  key: StepKey;
+  label: string;
+  jp: string;
+}
+
+const STEPS: Step[] = [
+  { key: "template", label: "Template", jp: "テンプレート" },
+  { key: "personal", label: "Personal", jp: "基本情報" },
+  { key: "education", label: "Education", jp: "学歴" },
+  { key: "work", label: "Work", jp: "職歴" },
+  { key: "licenses", label: "Licenses", jp: "免許・資格" },
+  { key: "extras", label: "Self PR · Prefs", jp: "自己PR・希望" },
+  { key: "preview", label: "Preview", jp: "確認" },
+];
 
 export function EditorClient() {
   const [data, setData, hydrated] = useLocalResume();
-  const [section, setSection] = useState<SectionKey>("personal");
+  const [template, setTemplate, tHydrated] = useTemplate();
+  const [stepKey, setStepKey] = useState<StepKey>("template");
   const [busy, setBusy] = useState<null | "translate" | "pdf" | "tex">(null);
 
-  if (!hydrated) {
+  if (!hydrated || !tHydrated) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
       </div>
     );
+  }
+
+  const stepIndex = STEPS.findIndex((s) => s.key === stepKey);
+  const isFirst = stepIndex === 0;
+  const isLast = stepIndex === STEPS.length - 1;
+  const isPreview = stepKey === "preview";
+
+  function go(delta: number) {
+    const next = Math.max(0, Math.min(STEPS.length - 1, stepIndex + delta));
+    setStepKey(STEPS[next].key);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function jumpTo(key: StepKey) {
+    setStepKey(key);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function downloadPdf() {
@@ -47,9 +91,12 @@ export function EditorClient() {
       const res = await fetch("/api/pdf", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ resume: data }),
+        body: JSON.stringify({ resume: data, template }),
       });
-      if (!res.ok) throw new Error(`PDF generation failed (${res.status})`);
+      if (!res.ok) {
+        const msg = await res.text().catch(() => `PDF generation failed (${res.status})`);
+        throw new Error(msg || `PDF generation failed (${res.status})`);
+      }
       const blob = await res.blob();
       saveBlob(blob, "rirekisho.pdf");
       toast.success("PDF downloaded");
@@ -59,32 +106,6 @@ export function EditorClient() {
     } finally {
       setBusy(null);
     }
-  }
-
-  async function downloadTex() {
-    setBusy("tex");
-    try {
-      const res = await fetch("/api/tex", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ resume: data }),
-      });
-      if (!res.ok) throw new Error("TeX export failed");
-      const blob = await res.blob();
-      saveBlob(blob, "rirekisho.tex");
-      toast.success("XeLaTeX source downloaded");
-    } catch (e) {
-      console.error(e);
-      toast.error(e instanceof Error ? e.message : "Failed to export TeX");
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  function downloadJson() {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    saveBlob(blob, "rirekisho.json");
-    toast.success("JSON backup downloaded");
   }
 
   function importJson() {
@@ -127,132 +148,98 @@ export function EditorClient() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-zinc-50">
+    <div className="min-h-screen flex flex-col bg-zinc-50">
       <Header
-        onTranslate={translateAll}
-        onPdf={downloadPdf}
-        onTex={downloadTex}
-        onJson={downloadJson}
         onImport={importJson}
         onSample={loadSample}
+        onTranslate={translateAll}
         busy={busy}
       />
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left rail */}
-        <aside className="hidden lg:flex w-56 flex-col border-r bg-white">
-          <div className="p-4 border-b">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Sections
-            </p>
-          </div>
-          <nav className="p-2 space-y-0.5 text-sm">
-            <NavItem active={section === "personal"} onClick={() => setSection("personal")}>
-              Personal info
-            </NavItem>
-            <NavItem active={section === "education"} onClick={() => setSection("education")}>
-              Education · 学歴
-            </NavItem>
-            <NavItem active={section === "work"} onClick={() => setSection("work")}>
-              Work · 職歴
-            </NavItem>
-            <NavItem active={section === "licenses"} onClick={() => setSection("licenses")}>
-              Licenses · 免許・資格
-            </NavItem>
-            <NavItem active={section === "extras"} onClick={() => setSection("extras")}>
-              Self-PR · Preferences
-            </NavItem>
-          </nav>
-          <div className="mt-auto p-3 text-[11px] text-muted-foreground">
-            Autosaved locally. Nothing leaves your browser unless you click <em>Translate</em> or{" "}
-            <em>Download PDF</em>.
-          </div>
-        </aside>
+      <Stepper currentIndex={stepIndex} onJump={jumpTo} />
 
-        {/* Center form */}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-          <div className="mx-auto max-w-2xl">
-            {/* Mobile tabs */}
-            <div className="lg:hidden mb-4">
-              <Tabs value={section} onValueChange={(v) => setSection(v as SectionKey)}>
-                <TabsList className="w-full grid grid-cols-5">
-                  <TabsTrigger value="personal">Info</TabsTrigger>
-                  <TabsTrigger value="education">Edu</TabsTrigger>
-                  <TabsTrigger value="work">Work</TabsTrigger>
-                  <TabsTrigger value="licenses">License</TabsTrigger>
-                  <TabsTrigger value="extras">Extra</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-
+      <main className={`flex-1 ${isPreview ? "" : "px-4 lg:px-8 py-8"}`}>
+        {isPreview ? (
+          <PreviewStep
+            data={data}
+            template={template}
+            onBack={() => jumpTo("extras")}
+            onEdit={() => jumpTo("personal")}
+            onDownloadPdf={downloadPdf}
+            busy={busy}
+          />
+        ) : (
+          <div className="mx-auto max-w-3xl">
             <AnimatePresence mode="wait">
               <motion.div
-                key={section}
-                initial={{ opacity: 0, y: 6 }}
+                key={stepKey}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.18 }}
               >
-                {section === "personal" && <PersonalForm data={data} setData={setData} />}
-                {section === "education" && <EducationForm data={data} setData={setData} />}
-                {section === "work" && <WorkForm data={data} setData={setData} />}
-                {section === "licenses" && <LicensesForm data={data} setData={setData} />}
-                {section === "extras" && <ExtrasForm data={data} setData={setData} />}
+                {stepKey === "template" && (
+                  <TemplatePicker value={template} onChange={setTemplate} />
+                )}
+                {stepKey === "personal" && <PersonalForm data={data} setData={setData} />}
+                {stepKey === "education" && <EducationForm data={data} setData={setData} />}
+                {stepKey === "work" && <WorkForm data={data} setData={setData} />}
+                {stepKey === "licenses" && <LicensesForm data={data} setData={setData} />}
+                {stepKey === "extras" && <ExtrasForm data={data} setData={setData} />}
               </motion.div>
             </AnimatePresence>
-          </div>
-        </main>
 
-        {/* Right preview */}
-        <aside className="hidden xl:flex w-[720px] 2xl:w-[860px] flex-col border-l bg-zinc-100">
-          <div className="px-4 py-3 border-b bg-white flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Live preview · A3 landscape
-            </span>
-            <Link
-              href="/preview"
-              target="_blank"
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              Open full size →
-            </Link>
+            <div className="mt-8 flex items-center justify-between">
+              <Button
+                variant="outline"
+                onClick={() => go(-1)}
+                disabled={isFirst}
+                className="gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+
+              <div className="text-xs text-muted-foreground">
+                Step {stepIndex + 1} of {STEPS.length}
+              </div>
+
+              <Button onClick={() => go(1)} disabled={isLast} className="gap-2">
+                {stepIndex === STEPS.length - 2 ? "Review" : "Next"}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <div className="flex-1 overflow-auto p-4">
-            <Preview data={data} fitWidth />
-          </div>
-        </aside>
-      </div>
+        )}
+      </main>
     </div>
   );
 }
 
 function Header({
-  onTranslate,
-  onPdf,
-  onTex,
-  onJson,
   onImport,
   onSample,
+  onTranslate,
   busy,
 }: {
-  onTranslate: () => void;
-  onPdf: () => void;
-  onTex: () => void;
-  onJson: () => void;
   onImport: () => void;
   onSample: () => void;
+  onTranslate: () => void;
   busy: null | "translate" | "pdf" | "tex";
 }) {
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-white px-4 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white px-4 lg:px-6">
       <div className="flex items-center gap-3">
-        <Link href="/" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-3.5 w-3.5" />
           Home
         </Link>
         <span className="text-muted-foreground">·</span>
         <span className="font-medium tracking-tight">
-          <span className="font-jp mr-2">履歴書</span>Editor
+          <span className="font-jp mr-2">履歴書</span>Builder
         </span>
         <span className="ml-2 hidden sm:inline-flex items-center gap-1 text-[11px] text-muted-foreground">
           <Save className="h-3 w-3" /> Autosaved
@@ -265,14 +252,12 @@ function Header({
         <Button size="sm" variant="outline" onClick={onImport}>
           <Upload className="h-3.5 w-3.5" /> Import
         </Button>
-        <Button size="sm" variant="outline" onClick={onJson}>
-          <FileJson className="h-3.5 w-3.5" /> JSON
-        </Button>
-        <Button size="sm" variant="outline" onClick={onTex} disabled={busy === "tex"}>
-          {busy === "tex" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
-          .tex
-        </Button>
-        <Button size="sm" variant="secondary" onClick={onTranslate} disabled={busy === "translate"}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={onTranslate}
+          disabled={busy === "translate"}
+        >
           {busy === "translate" ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (
@@ -280,33 +265,175 @@ function Header({
           )}
           Translate
         </Button>
-        <Button size="sm" onClick={onPdf} disabled={busy === "pdf"}>
-          {busy === "pdf" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-          PDF
-        </Button>
       </div>
     </header>
   );
 }
 
-function NavItem({
-  active,
-  onClick,
-  children,
+function Stepper({
+  currentIndex,
+  onJump,
 }: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
+  currentIndex: number;
+  onJump: (key: StepKey) => void;
 }) {
+  const prevStep = currentIndex > 0 ? STEPS[currentIndex - 1] : null;
+  const nextStep = currentIndex < STEPS.length - 1 ? STEPS[currentIndex + 1] : null;
+  const progress = ((currentIndex + 1) / STEPS.length) * 100;
+
   return (
-    <button
-      onClick={onClick}
-      className={`w-full text-left rounded-md px-3 py-2 transition-colors ${
-        active ? "bg-zinc-900 text-white" : "text-muted-foreground hover:bg-zinc-100 hover:text-foreground"
-      }`}
-    >
-      {children}
-    </button>
+    <nav className="sticky top-14 z-20 bg-white border-b">
+      {/* Progress bar */}
+      <div className="h-1 w-full bg-zinc-100">
+        <div
+          className="h-full bg-zinc-900 transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      <div className="mx-auto max-w-6xl px-3 lg:px-6 py-3 flex items-center gap-3">
+        {/* Quick prev button */}
+        <button
+          onClick={() => prevStep && onJump(prevStep.key)}
+          disabled={!prevStep}
+          aria-label="Previous step"
+          className="hidden sm:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+
+        {/* Steps */}
+        <div className="flex-1 overflow-x-auto">
+          <ol className="flex items-center gap-1 min-w-max">
+            {STEPS.map((s, i) => {
+              const isDone = i < currentIndex;
+              const isActive = i === currentIndex;
+              return (
+                <li key={s.key} className="flex items-center">
+                  <button
+                    onClick={() => onJump(s.key)}
+                    title={`${s.label} · ${s.jp}`}
+                    className={`group flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all ${
+                      isActive
+                        ? "bg-zinc-900 text-white shadow-sm"
+                        : isDone
+                          ? "text-zinc-700 hover:bg-emerald-50 hover:text-emerald-900"
+                          : "text-zinc-400 hover:bg-zinc-50 hover:text-zinc-700"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                        isActive
+                          ? "bg-white text-zinc-900"
+                          : isDone
+                            ? "bg-emerald-500 text-white"
+                            : "bg-zinc-200 text-zinc-500 group-hover:bg-zinc-300"
+                      }`}
+                    >
+                      {isDone ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : i + 1}
+                    </span>
+                    <span className="font-medium whitespace-nowrap">{s.label}</span>
+                    <span
+                      className={`font-jp text-[10px] hidden xl:inline ${
+                        isActive ? "opacity-80" : "opacity-60"
+                      }`}
+                    >
+                      {s.jp}
+                    </span>
+                  </button>
+                  {i < STEPS.length - 1 && (
+                    <ChevronRight className="h-3.5 w-3.5 text-zinc-300 mx-0.5 flex-shrink-0" />
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        {/* Quick next button */}
+        <button
+          onClick={() => nextStep && onJump(nextStep.key)}
+          disabled={!nextStep}
+          aria-label="Next step"
+          className="hidden sm:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
+    </nav>
+  );
+}
+
+function PreviewStep({
+  data,
+  template,
+  onBack,
+  onEdit,
+  onDownloadPdf,
+  busy,
+}: {
+  data: import("@/lib/schema").Resume;
+  template: import("@/lib/templates").TemplateKey;
+  onBack: () => void;
+  onEdit: () => void;
+  onDownloadPdf: () => void;
+  busy: null | "translate" | "pdf" | "tex";
+}) {
+  const meta = TEMPLATES[template];
+  return (
+    <div className="flex flex-col">
+      <div className="border-b bg-white px-4 lg:px-8 py-4">
+        <div className="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-lg font-semibold">Review your resume</h1>
+            <p className="text-sm text-muted-foreground">
+              Using <span className="font-medium">{meta.name}</span>
+              <span className="font-jp ml-1">({meta.jp})</span> · {meta.paper}{" "}
+              {meta.orientation}. Check the details below — if anything&apos;s off,
+              click <em>Edit</em>.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={onBack} className="gap-2">
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Button>
+            <Button variant="outline" onClick={onEdit} className="gap-2">
+              <Edit3 className="h-4 w-4" /> Edit
+            </Button>
+            <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
+              {busy === "pdf" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Download PDF
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 bg-zinc-200 py-8 px-4 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <Preview data={data} template={template} />
+        </div>
+      </div>
+
+      <div className="border-t bg-white px-4 lg:px-8 py-4">
+        <div className="mx-auto max-w-6xl flex items-center justify-between">
+          <Button variant="outline" onClick={onBack} className="gap-2">
+            <ArrowLeft className="h-4 w-4" /> Back to editing
+          </Button>
+          <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
+            {busy === "pdf" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            Download PDF
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 

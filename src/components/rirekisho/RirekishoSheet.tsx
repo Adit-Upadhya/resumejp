@@ -180,6 +180,13 @@ export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function Rirekis
 
           {/* ============= RIGHT COLUMN ============= */}
           <div className="col col-right">
+            {/* Invisible spacer mirroring the LEFT page-head so both
+                column contents start at the same vertical position. */}
+            <header className="page-head page-head-spacer" aria-hidden="true">
+              <h1>&nbsp;</h1>
+              <div className="as-of">&nbsp;</div>
+            </header>
+
             <HistoryTable rows={rightRows} compact />
 
             <LicensesTable rows={licenses} />
