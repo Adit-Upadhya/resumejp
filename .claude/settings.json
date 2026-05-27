@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx next *)",
+      "Bash(PORT=3137 npx next dev -p 3137)",
+      "Bash(curl -fsS http://localhost:3137/)",
+      "Bash(curl -s -o /dev/null -w \"/: %{http_code}\\\\n\" http://localhost:3137/)",
+      "Bash(curl -s -o /dev/null -w \"/editor: %{http_code}\\\\n\" http://localhost:3137/editor)",
+      "Bash(curl -s -o /dev/null -w \"/preview: %{http_code}\\\\n\" http://localhost:3137/preview)",
+      "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-resume.json http://localhost:3137/api/tex -o /tmp/sample.tex -w \"tex: %{http_code} size=%{size_download}\\\\n\")",
+      "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-resume.json http://localhost:3137/api/pdf -o /tmp/sample.pdf -w \"pdf: %{http_code} size=%{size_download}\\\\n\")",
+      "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-resume.json http://localhost:3137/api/translate -w \"\\\\ntranslate-status: %{http_code}\\\\n\")",
+      "Bash(sips -s format png sample.pdf --out sample.png)",
+      "Bash(sips -s format png /tmp/sample.pdf --out /tmp/sample.png)",
+      "Bash(sips -s format png --pageRange 2 sample.pdf --out sample-p2.png)",
+      "Bash(/System/Library/Frameworks/Quartz.framework/Versions/A/Frameworks/QuickLookUI.framework/Versions/A/Resources/QuickLookSatellite.app/Contents/MacOS/QuickLookSatellite --help)",
+      "Read(//System/Library/PrivateFrameworks/QuickLookSupport.framework/**)",
+      "Bash(swift /tmp/extract_p2.swift)",
+      "Bash(kill %1)",
+      "Bash(xargs kill -9)",
+      "Bash(npm uninstall *)",
+      "Bash(echo \"tsc: $?\")",
+      "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-en.json http://localhost:3137/api/translate -w \"\\\\nstatus: %{http_code} time: %{time_total}s\\\\n\")",
+      "Bash(brew install *)",
+      "Bash(curl -s -X POST -H \"content-type: application/json\" --data @/tmp/sample-resume.json http://localhost:3137/api/pdf -o /tmp/a3.pdf -w \"pdf: %{http_code} size=%{size_download}\\\\n\")",
+      "Bash(sips -s format png /tmp/a3.pdf --out /tmp/a3.png)"
+    ],
+    "additionalDirectories": [
+      "/tmp",
+      "/private/tmp"
+    ]
+  }
+}

@@ -1,0 +1,308 @@
+/*
+ * Rirekisho sheet styles — A3 LANDSCAPE single page with two columns.
+ *
+ * The reference template is the classic 観音開き履歴書 layout: one physical
+ * page (A3 wide, A4 tall) divided into a LEFT and RIGHT column. The same
+ * component renders the on-screen preview and the Puppeteer-printed PDF, so
+ * everything uses millimetres to stay pixel-identical between the two.
+ */
+
+.rirekisho-root {
+  font-family: var(--font-noto-jp), "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  color: #1a1a1a;
+  font-size: 9pt;
+  line-height: 1.35;
+  --border: 0.5pt solid #1a1a1a;
+  --border-thin: 0.3pt solid #1a1a1a;
+}
+
+/* Sheet — A3 landscape (420×297mm) */
+.rirekisho-root .page {
+  width: 420mm;
+  min-height: 297mm;
+  padding: 9mm 9mm 7mm 9mm;
+  background: #fff;
+  box-sizing: border-box;
+  position: relative;
+  box-shadow: 0 0 0 0.5pt #ddd;
+}
+
+/* Two-column flex container */
+.rirekisho-root .columns {
+  display: flex;
+  gap: 6mm;
+  align-items: flex-start;
+}
+.rirekisho-root .col {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+  flex: 1 1 0;
+  min-width: 0;
+}
+.rirekisho-root .col-left,
+.rirekisho-root .col-right {
+  min-height: 281mm; /* page height minus padding */
+}
+
+/* Header */
+.rirekisho-root .page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1mm;
+}
+.rirekisho-root .page-head h1 {
+  font-size: 22pt;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  margin: 0;
+}
+.rirekisho-root .as-of {
+  font-size: 9pt;
+  letter-spacing: 0.08em;
+}
+
+/* Generic table */
+.rirekisho-root table {
+  width: 100%;
+  border-collapse: collapse;
+  border: var(--border);
+  table-layout: fixed;
+}
+.rirekisho-root th,
+.rirekisho-root td {
+  border: var(--border);
+  padding: 0.7mm 1.6mm;
+  vertical-align: middle;
+  background: #fff;
+  font-weight: normal;
+  word-break: break-word;
+}
+
+/* Identity table — top of LEFT column */
+.rirekisho-root .ident {
+  table-layout: fixed;
+}
+.rirekisho-root .ident .lbl {
+  width: 18mm;
+  background: #fafafa;
+  font-size: 8pt;
+  text-align: center;
+}
+.rirekisho-root .ident .lbl-sm {
+  width: 22mm;
+  background: #fafafa;
+  font-size: 7.5pt;
+  text-align: center;
+}
+.rirekisho-root .ident .ident-name-furi {
+  height: 5mm;
+  font-size: 8pt;
+}
+.rirekisho-root .ident .ident-name {
+  height: 14mm;
+}
+.rirekisho-root .ident .name-text {
+  font-size: 18pt;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.rirekisho-root .ident .cell-nat {
+  width: 30mm;
+}
+.rirekisho-root .ident .cell-dob {
+  font-size: 8.5pt;
+}
+.rirekisho-root .ident .lbl-gender {
+  background: #fafafa;
+  font-size: 8pt;
+  text-align: center;
+  white-space: nowrap;
+}
+.rirekisho-root .ident .addr-cell {
+  min-height: 10mm;
+}
+.rirekisho-root .ident .postal {
+  font-size: 7.5pt;
+  color: #555;
+}
+.rirekisho-root .ident .addr {
+  font-size: 9pt;
+  margin-top: 0.6mm;
+}
+.rirekisho-root .ident .hint {
+  font-size: 7pt;
+  color: #777;
+  margin-top: 0.6mm;
+}
+.rirekisho-root .ident .same-as-above {
+  font-size: 10pt;
+}
+.rirekisho-root .ident .cell-phone,
+.rirekisho-root .ident .cell-mail {
+  font-size: 8.5pt;
+}
+.rirekisho-root .photo-cell {
+  width: 30mm;
+  height: 40mm;
+  vertical-align: middle;
+  text-align: center;
+  padding: 1mm;
+}
+.rirekisho-root .photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rirekisho-root .photo-placeholder {
+  width: 100%;
+  height: 100%;
+  border: 0.3pt dashed #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7pt;
+  color: #aaa;
+}
+
+/* Gender / spouse circled marks */
+.rirekisho-root .gender,
+.rirekisho-root .spouse {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5mm;
+  font-size: 9.5pt;
+}
+.rirekisho-root .gender .dot,
+.rirekisho-root .spouse .dot {
+  color: #666;
+}
+.rirekisho-root .circled {
+  display: inline-block;
+  padding: 0 1mm;
+  border: 0.7pt solid #1a1a1a;
+  border-radius: 999px;
+  line-height: 1.1;
+  min-width: 4mm;
+  text-align: center;
+}
+
+/* History / licenses tables */
+.rirekisho-root .history,
+.rirekisho-root .licenses {
+  margin-top: 0;
+}
+.rirekisho-root .history thead th,
+.rirekisho-root .licenses thead th {
+  background: #fafafa;
+  font-size: 8pt;
+  text-align: center;
+  letter-spacing: 0.3em;
+  height: 6mm;
+}
+.rirekisho-root .history .col-year,
+.rirekisho-root .licenses .col-year {
+  width: 13mm;
+  text-align: center;
+}
+.rirekisho-root .history .col-month,
+.rirekisho-root .licenses .col-month {
+  width: 10mm;
+  text-align: center;
+}
+.rirekisho-root .history .cell-year,
+.rirekisho-root .history .cell-month,
+.rirekisho-root .licenses .cell-year,
+.rirekisho-root .licenses .cell-month {
+  text-align: center;
+  font-size: 9pt;
+  height: 7.5mm;
+}
+.rirekisho-root .history .cell-content,
+.rirekisho-root .licenses .cell-content {
+  padding-left: 4mm;
+  font-size: 9pt;
+}
+.rirekisho-root .history .cell-content.section-header {
+  text-align: center;
+  letter-spacing: 0.4em;
+  font-weight: 500;
+}
+.rirekisho-root .history .cell-content.end {
+  text-align: right;
+  padding-right: 4mm;
+}
+
+/* Footnote — bottom of LEFT column */
+.rirekisho-root .footnote {
+  display: flex;
+  gap: 3mm;
+  align-items: flex-start;
+  font-size: 6.5pt;
+  color: #555;
+  margin-top: auto;
+}
+.rirekisho-root .footnote-label {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Extras (RIGHT column middle block) */
+.rirekisho-root .extras {
+  margin-top: 0;
+  table-layout: fixed;
+}
+.rirekisho-root .extras .lbl {
+  background: #fafafa;
+  font-size: 8pt;
+}
+.rirekisho-root .extras .center {
+  text-align: center;
+}
+.rirekisho-root .extras .selfpr-cell {
+  height: 38mm;
+  vertical-align: top;
+  padding: 2mm 2.5mm;
+  font-size: 9pt;
+  line-height: 1.55;
+}
+.rirekisho-root .extras .selfpr-text {
+  white-space: pre-wrap;
+}
+.rirekisho-root .extras .commute-cell {
+  text-align: center;
+  height: 9mm;
+  font-size: 9pt;
+}
+.rirekisho-root .extras .dependents-cell {
+  text-align: center;
+  height: 8mm;
+  font-size: 9pt;
+}
+.rirekisho-root .extras .spouse-cell {
+  text-align: center;
+  height: 9mm;
+  font-size: 9pt;
+}
+
+/* Preferences (RIGHT column bottom block) */
+.rirekisho-root .prefs {
+  margin-top: 2mm;
+  table-layout: fixed;
+}
+.rirekisho-root .prefs .lbl {
+  background: #fafafa;
+  font-size: 8pt;
+}
+.rirekisho-root .prefs .center {
+  text-align: center;
+}
+.rirekisho-root .prefs .prefs-cell {
+  height: 60mm;
+  vertical-align: top;
+  padding: 2.5mm 3mm;
+  font-size: 9pt;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}

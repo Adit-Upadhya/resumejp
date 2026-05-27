@@ -1,0 +1,15 @@
+/* Page rules used only when Puppeteer prints the sheet. A3 landscape, no margin. */
+@page {
+  size: A3 landscape;
+  margin: 0;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+}
+.rirekisho-root .page {
+  margin: 0 !important;
+  box-shadow: none !important;
+}
