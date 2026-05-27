@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import puppeteer, { type Browser } from "puppeteer";
 import { ResumeSchema } from "@/lib/schema";
 import { TEMPLATES, type TemplateKey } from "@/lib/templates";
+import { storePreviewData, removePreviewData } from "@/lib/preview-store";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -51,10 +52,10 @@ export async function POST(req: Request) {
   const meta = TEMPLATES[template];
 
   const json = JSON.stringify(parsed.data);
-  const encoded = Buffer.from(json, "utf-8").toString("base64");
+  const token = storePreviewData(json);
 
   const origin = originFromRequest(req);
-  const url = `${origin}/preview?template=${template}&data=${encodeURIComponent(encoded)}`;
+  const url = `${origin}/preview?template=${template}&token=${token}`;
 
   const browser = await getBrowser();
   const page = await browser.newPage();
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
     await page.goto(url, { waitUntil: "networkidle0", timeout: 30_000 });
     await page.waitForFunction(
       "window.__rirekishoReady === true",
-      { timeout: 10_000 },
+      { timeout: 15_000 },
     );
     // Give Noto Sans JP a beat to actually paint after fonts.ready resolves.
     await page.evaluateHandle("document.fonts.ready");
@@ -96,6 +97,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: msg }, { status: 500 });
   } finally {
     await page.close().catch(() => {});
+    removePreviewData(token);
   }
 }
 

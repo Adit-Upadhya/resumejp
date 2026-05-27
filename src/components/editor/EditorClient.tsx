@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -149,6 +149,7 @@ export function EditorClient() {
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50">
+      <AnimatePresence>{busy === "pdf" && <PdfLoadingOverlay />}</AnimatePresence>
       <Header
         onImport={importJson}
         onSample={loadSample}
@@ -446,4 +447,72 @@ function saveBlob(blob: Blob, filename: string) {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+const PDF_MESSAGES = [
+  "Rendering your resume…",
+  "Loading Japanese fonts…",
+  "Laying out your 履歴書…",
+  "Generating PDF…",
+  "Almost ready…",
+];
+
+function PdfLoadingOverlay() {
+  const [msgIdx, setMsgIdx] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setMsgIdx((i) => (i + 1) % PDF_MESSAGES.length), 2200);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ scale: 0.88, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.88, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        className="bg-white rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-5 w-72"
+      >
+        <motion.div
+          animate={{ y: [0, -8, 0] }}
+          transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
+          className="text-5xl select-none"
+        >
+          📄
+        </motion.div>
+
+        <div className="text-center space-y-1.5">
+          <p className="font-semibold text-base">Generating PDF</p>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={msgIdx}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="text-sm text-muted-foreground min-h-[1.25rem]"
+            >
+              {PDF_MESSAGES[msgIdx]}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+
+        <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-zinc-900 rounded-full"
+            initial={{ width: "4%" }}
+            animate={{ width: "88%" }}
+            transition={{ duration: 14, ease: "easeOut" }}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
 }

@@ -25,10 +25,18 @@ export function PrintPreviewClient() {
     const t = (params.get("template") as TemplateKey | null) ?? loadTemplate();
     setTemplate(t in TEMPLATES ? t : "jis-a3");
 
+    const token = params.get("token");
     const encoded = params.get("data");
-    if (encoded) {
+
+    if (token) {
+      fetch(`/api/preview-data?token=${encodeURIComponent(token)}`)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((json) => setData(json as Resume))
+        .catch(() => setData(emptyResume()));
+    } else if (encoded) {
       try {
-        const decoded = decodeURIComponent(escape(atob(encoded)));
+        const bytes = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0));
+        const decoded = new TextDecoder().decode(bytes);
         setData(JSON.parse(decoded) as Resume);
       } catch {
         setData(emptyResume());
