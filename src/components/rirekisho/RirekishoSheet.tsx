@@ -25,8 +25,11 @@ import { formatDobJp, formatPostalCode } from "@/lib/utils";
  * browser preview and in the Puppeteer-printed A3 landscape PDF.
  */
 
-const LEFT_HISTORY_ROWS = 9;
-const RIGHT_HISTORY_ROWS = 10;
+// Row counts matched to the blank coto Japanese Academy reference template:
+// LEFT column fills its full height with ~22 lines for 学歴 + 職歴, the RIGHT
+// column reserves ~7 lines for overflow, and 免許・資格 reserves ~9 lines.
+const LEFT_HISTORY_ROWS = 22;
+const RIGHT_HISTORY_ROWS = 7;
 const LICENSE_ROWS = 9;
 
 function pad<T>(arr: T[], n: number, blank: () => T): T[] {
