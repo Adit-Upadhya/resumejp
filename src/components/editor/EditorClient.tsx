@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Download,
   Edit3,
+  Home,
   Loader2,
   Save,
   Upload,
@@ -60,6 +61,7 @@ export function EditorClient() {
   const [template, setTemplate, tHydrated] = useTemplate();
   const [stepKey, setStepKey] = useState<StepKey>("template");
   const [busy, setBusy] = useState<null | "translate" | "pdf" | "tex">(null);
+  const [downloaded, setDownloaded] = useState(false);
 
   if (!hydrated || !tHydrated) {
     return (
@@ -98,7 +100,6 @@ export function EditorClient() {
 
       const meta = TEMPLATES[template];
 
-      // Temporarily remove the CSS scale so html2canvas captures at natural resolution
       const savedTransform = el.style.transform;
       el.style.transform = "none";
 
@@ -122,7 +123,35 @@ export function EditorClient() {
 
       const imgData = canvas.toDataURL("image/jpeg", 0.97);
       pdf.addImage(imgData, "JPEG", 0, 0, meta.widthMm, meta.heightMm);
-      pdf.save("rirekisho.pdf");
+
+      const blob = pdf.output("blob");
+      const filename = "rirekisho.pdf";
+
+      // On mobile, prefer Web Share API so the file lands in Downloads/Files
+      // instead of opening in the browser tab.
+      const file = new File([blob], filename, { type: "application/pdf" });
+      if (
+        typeof navigator.canShare === "function" &&
+        navigator.canShare({ files: [file] })
+      ) {
+        try {
+          await navigator.share({ files: [file], title: "Rirekisho" });
+        } catch (shareErr) {
+          // User cancelled the share sheet — not an error
+          if ((shareErr as DOMException)?.name !== "AbortError") throw shareErr;
+        }
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      setDownloaded(true);
       toast.success("PDF downloaded");
     } catch (e) {
       console.error(e);
@@ -192,6 +221,8 @@ export function EditorClient() {
             onEdit={() => jumpTo("personal")}
             onDownloadPdf={downloadPdf}
             busy={busy}
+            downloaded={downloaded}
+            onResetDownload={() => setDownloaded(false)}
           />
         ) : (
           <div className="mx-auto max-w-3xl">
@@ -254,28 +285,29 @@ function Header({
 }) {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white px-4 lg:px-6">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground shrink-0"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          Home
+          <span className="hidden xs:inline">Home</span>
         </Link>
-        <span className="text-muted-foreground">·</span>
-        <span className="font-medium tracking-tight">
-          <span className="font-jp mr-2">履歴書</span>Builder
+        <span className="text-muted-foreground hidden sm:inline">·</span>
+        <span className="font-medium tracking-tight text-sm hidden sm:inline truncate">
+          <span className="font-jp mr-1.5">履歴書</span>Builder
         </span>
-        <span className="ml-2 hidden sm:inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+        <span className="ml-1 hidden lg:inline-flex items-center gap-1 text-[11px] text-muted-foreground">
           <Save className="h-3 w-3" /> Autosaved
         </span>
       </div>
-      <div className="flex items-center gap-2">
-        <Button size="sm" variant="ghost" onClick={onSample}>
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <Button size="sm" variant="ghost" onClick={onSample} className="hidden sm:flex">
           Load sample
         </Button>
-        <Button size="sm" variant="outline" onClick={onImport}>
-          <Upload className="h-3.5 w-3.5" /> Import
+        <Button size="sm" variant="outline" onClick={onImport} className="hidden sm:flex">
+          <Upload className="h-3.5 w-3.5" />
+          <span className="hidden md:inline">Import</span>
         </Button>
         <Button
           size="sm"
@@ -288,7 +320,7 @@ function Header({
           ) : (
             <span className="font-jp text-[11px]">あ→日</span>
           )}
-          Translate
+          <span className="hidden sm:inline">Translate</span>
         </Button>
       </div>
     </header>
@@ -316,20 +348,20 @@ function Stepper({
         />
       </div>
 
-      <div className="mx-auto max-w-6xl px-3 lg:px-6 py-3 flex items-center gap-3">
+      <div className="mx-auto max-w-6xl px-2 sm:px-3 lg:px-6 py-2 sm:py-3 flex items-center gap-2 sm:gap-3">
         {/* Quick prev button */}
         <button
           onClick={() => prevStep && onJump(prevStep.key)}
           disabled={!prevStep}
           aria-label="Previous step"
-          className="hidden sm:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-lg border bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </button>
 
-        {/* Steps */}
-        <div className="flex-1 overflow-x-auto">
-          <ol className="flex items-center gap-1 min-w-max">
+        {/* Steps — scrollable on mobile */}
+        <div className="flex-1 overflow-x-auto scrollbar-none">
+          <ol className="flex items-center gap-0.5 sm:gap-1 min-w-max">
             {STEPS.map((s, i) => {
               const isDone = i < currentIndex;
               const isActive = i === currentIndex;
@@ -338,7 +370,7 @@ function Stepper({
                   <button
                     onClick={() => onJump(s.key)}
                     title={`${s.label} · ${s.jp}`}
-                    className={`group flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all ${
+                    className={`group flex items-center gap-1.5 sm:gap-2 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm transition-all ${
                       isActive
                         ? "bg-zinc-900 text-white shadow-sm"
                         : isDone
@@ -347,7 +379,7 @@ function Stepper({
                     }`}
                   >
                     <span
-                      className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                      className={`flex h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] sm:text-[11px] font-semibold ${
                         isActive
                           ? "bg-white text-zinc-900"
                           : isDone
@@ -355,7 +387,7 @@ function Stepper({
                             : "bg-zinc-200 text-zinc-500 group-hover:bg-zinc-300"
                       }`}
                     >
-                      {isDone ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : i + 1}
+                      {isDone ? <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={3} /> : i + 1}
                     </span>
                     <span className="font-medium whitespace-nowrap">{s.label}</span>
                     <span
@@ -367,7 +399,7 @@ function Stepper({
                     </span>
                   </button>
                   {i < STEPS.length - 1 && (
-                    <ChevronRight className="h-3.5 w-3.5 text-zinc-300 mx-0.5 flex-shrink-0" />
+                    <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-zinc-300 mx-0 sm:mx-0.5 flex-shrink-0" />
                   )}
                 </li>
               );
@@ -380,9 +412,9 @@ function Stepper({
           onClick={() => nextStep && onJump(nextStep.key)}
           disabled={!nextStep}
           aria-label="Next step"
-          className="hidden sm:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-lg border bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </button>
       </div>
     </nav>
@@ -396,6 +428,8 @@ function PreviewStep({
   onEdit,
   onDownloadPdf,
   busy,
+  downloaded,
+  onResetDownload,
 }: {
   data: import("@/lib/schema").Resume;
   template: import("@/lib/templates").TemplateKey;
@@ -403,33 +437,40 @@ function PreviewStep({
   onEdit: () => void;
   onDownloadPdf: () => void;
   busy: null | "translate" | "pdf" | "tex";
+  downloaded: boolean;
+  onResetDownload: () => void;
 }) {
   const meta = TEMPLATES[template];
   return (
     <div className="flex flex-col">
+      {/* Top bar */}
       <div className="border-b bg-white px-4 lg:px-8 py-4">
-        <div className="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg font-semibold">Review your resume</h1>
-            <p className="text-sm text-muted-foreground">
-              Using <span className="font-medium">{meta.name}</span>
+        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-base sm:text-lg font-semibold">Review your resume</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              <span className="font-medium">{meta.name}</span>
               <span className="font-jp ml-1">({meta.jp})</span> · {meta.paper}{" "}
-              {meta.orientation}. Check the details below — if anything&apos;s off,
-              click <em>Edit</em>.
+              {meta.orientation}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={onBack} className="gap-2">
-              <ArrowLeft className="h-4 w-4" /> Back
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button variant="outline" size="sm" onClick={onBack} className="gap-1.5">
+              <ArrowLeft className="h-3.5 w-3.5" /> Back
             </Button>
-            <Button variant="outline" onClick={onEdit} className="gap-2">
-              <Edit3 className="h-4 w-4" /> Edit
+            <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
+              <Edit3 className="h-3.5 w-3.5" /> Edit
             </Button>
-            <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
+            <Button
+              size="sm"
+              onClick={onDownloadPdf}
+              disabled={busy === "pdf"}
+              className="gap-1.5"
+            >
               {busy === "pdf" ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <Download className="h-4 w-4" />
+                <Download className="h-3.5 w-3.5" />
               )}
               Download PDF
             </Button>
@@ -437,25 +478,81 @@ function PreviewStep({
         </div>
       </div>
 
-      <div className="flex-1 bg-zinc-200 py-8 px-4 lg:px-8">
+      {/* Preview area */}
+      <div className="flex-1 bg-zinc-200 py-6 px-3 sm:py-8 sm:px-4 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <Preview data={data} template={template} />
         </div>
       </div>
 
+      {/* Bottom action bar */}
       <div className="border-t bg-white px-4 lg:px-8 py-4">
-        <div className="mx-auto max-w-6xl flex items-center justify-between">
-          <Button variant="outline" onClick={onBack} className="gap-2">
-            <ArrowLeft className="h-4 w-4" /> Back to editing
-          </Button>
-          <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
-            {busy === "pdf" ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+        <div className="mx-auto max-w-6xl">
+          <AnimatePresence mode="wait">
+            {downloaded ? (
+              <motion.div
+                key="downloaded"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+              >
+                <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium">
+                  <Check className="h-4 w-4" strokeWidth={3} />
+                  PDF downloaded successfully
+                </div>
+                <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
+                  <Button
+                    variant="outline"
+                    onClick={() => { onResetDownload(); onDownloadPdf(); }}
+                    disabled={busy === "pdf"}
+                    className="gap-2 flex-1 sm:flex-none"
+                  >
+                    {busy === "pdf" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                    Download again
+                  </Button>
+                  <Button asChild className="gap-2 flex-1 sm:flex-none">
+                    <Link href="/">
+                      <Home className="h-4 w-4" />
+                      Return to Home
+                    </Link>
+                  </Button>
+                </div>
+              </motion.div>
             ) : (
-              <Download className="h-4 w-4" />
+              <motion.div
+                key="actions"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-between gap-3"
+              >
+                <Button variant="outline" onClick={onBack} className="gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Back to editing</span>
+                  <span className="sm:hidden">Back</span>
+                </Button>
+                <Button
+                  onClick={onDownloadPdf}
+                  disabled={busy === "pdf"}
+                  className="gap-2"
+                >
+                  {busy === "pdf" ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  Download PDF
+                </Button>
+              </motion.div>
             )}
-            Download PDF
-          </Button>
+          </AnimatePresence>
         </div>
       </div>
     </div>
