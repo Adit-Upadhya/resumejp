@@ -44,6 +44,7 @@ export function Preview({ data, template }: Props) {
         style={{ width: sheetW * scale, height: sheetH * scale }}
       >
         <div
+          data-sheet-capture
           style={{
             width: sheetW,
             height: sheetH,

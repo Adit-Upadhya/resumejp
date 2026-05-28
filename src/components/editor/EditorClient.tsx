@@ -15,7 +15,7 @@ import {
   Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocalResume, saveResume } from "@/lib/storage";
+import { useLocalResume } from "@/lib/storage";
 import { TEMPLATES } from "@/lib/templates";
 import { useTemplate } from "@/lib/templates-hook";
 import { PersonalForm } from "./forms/PersonalForm";
@@ -85,12 +85,50 @@ export function EditorClient() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function downloadPdf() {
-    // Save latest data to localStorage immediately (autosave has a 400ms debounce)
-    saveResume(data);
-    const win = window.open(`/preview?template=${template}&print=1`, "_blank");
-    if (!win) {
-      toast.error("Allow popups for this site, then try again");
+  async function downloadPdf() {
+    setBusy("pdf");
+    try {
+      const el = document.querySelector<HTMLElement>("[data-sheet-capture]");
+      if (!el) throw new Error("Sheet element not found — open the Preview step first.");
+
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+
+      const meta = TEMPLATES[template];
+
+      // Temporarily remove the CSS scale so html2canvas captures at natural resolution
+      const savedTransform = el.style.transform;
+      el.style.transform = "none";
+
+      let canvas: HTMLCanvasElement;
+      try {
+        canvas = await html2canvas(el, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: "#ffffff",
+        });
+      } finally {
+        el.style.transform = savedTransform;
+      }
+
+      const pdf = new jsPDF({
+        orientation: meta.orientation === "landscape" ? "landscape" : "portrait",
+        unit: "mm",
+        format: meta.paper.toLowerCase() as "a3" | "a4",
+      });
+
+      const imgData = canvas.toDataURL("image/jpeg", 0.97);
+      pdf.addImage(imgData, "JPEG", 0, 0, meta.widthMm, meta.heightMm);
+      pdf.save("rirekisho.pdf");
+      toast.success("PDF downloaded");
+    } catch (e) {
+      console.error(e);
+      toast.error(e instanceof Error ? e.message : "Failed to generate PDF");
+    } finally {
+      setBusy(null);
     }
   }
 
@@ -135,6 +173,7 @@ export function EditorClient() {
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50">
+      <AnimatePresence>{busy === "pdf" && <PdfLoadingOverlay />}</AnimatePresence>
       <Header
         onImport={importJson}
         onSample={loadSample}
@@ -386,8 +425,12 @@ function PreviewStep({
             <Button variant="outline" onClick={onEdit} className="gap-2">
               <Edit3 className="h-4 w-4" /> Edit
             </Button>
-            <Button onClick={onDownloadPdf} className="gap-2">
-              <Download className="h-4 w-4" />
+            <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
+              {busy === "pdf" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
               Download PDF
             </Button>
           </div>
@@ -405,8 +448,12 @@ function PreviewStep({
           <Button variant="outline" onClick={onBack} className="gap-2">
             <ArrowLeft className="h-4 w-4" /> Back to editing
           </Button>
-          <Button onClick={onDownloadPdf} className="gap-2">
-            <Download className="h-4 w-4" />
+          <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
+            {busy === "pdf" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
             Download PDF
           </Button>
         </div>

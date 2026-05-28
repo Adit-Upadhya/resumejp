@@ -1,20 +1,13 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
 import { ResumeSchema } from "@/lib/schema";
 import { TEMPLATES, type TemplateKey } from "@/lib/templates";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-/**
- * Generates a PDF by:
- *   1. Launching headless Chromium via @sparticuz/chromium (works on Vercel)
- *   2. Navigating to /preview?template=...&puppeteer=1
- *   3. Injecting resume JSON directly via page.evaluate() — avoids the
- *      in-memory token store which breaks on Vercel (cross-instance state)
- *   4. Waiting for window.__rirekishoReady, then printing to PDF
- */
+const CHROMIUM_BINARY_URL =
+  process.env.CHROMIUM_BINARY_URL ??
+  "https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar";
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -38,11 +31,20 @@ export async function POST(req: Request) {
   const origin = originFromRequest(req);
   const url = `${origin}/preview?template=${template}&puppeteer=1`;
 
-  const executablePath =
-    process.env.PUPPETEER_EXECUTABLE_PATH ?? (await chromium.executablePath());
+  // Dynamic imports — avoids webpack converting static imports to require() for ESM-only packages
+  const [{ default: puppeteer }, { default: chromium }] = await Promise.all([
+    import("puppeteer-core"),
+    import("@sparticuz/chromium-min"),
+  ]);
 
-  const browser = await puppeteer.launch({
-    args: [...chromium.args, "--font-render-hinting=none"],
+  const executablePath =
+    process.env.PUPPETEER_EXECUTABLE_PATH ??
+    (await (chromium as { executablePath: (url: string) => Promise<string> }).executablePath(
+      CHROMIUM_BINARY_URL,
+    ));
+
+  const browser = await (puppeteer as { launch: (opts: unknown) => Promise<import("puppeteer-core").Browser> }).launch({
+    args: (chromium as { args: string[] }).args,
     executablePath,
     headless: true,
   });
@@ -57,13 +59,12 @@ export async function POST(req: Request) {
       deviceScaleFactor: 2,
     });
 
-    // Load the page shell, then inject data before React hydrates
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await page.evaluate((resumeJson: string) => {
       (window as unknown as { __puppeteerResumeData: string }).__puppeteerResumeData = resumeJson;
     }, json);
 
-    await page.waitForFunction("window.__rirekishoReady === true", { timeout: 15_000 });
+    await page.waitForFunction("window.__rirekishoReady === true", { timeout: 20_000 });
     await page.evaluateHandle("document.fonts.ready");
 
     const pdf = await page.pdf({
