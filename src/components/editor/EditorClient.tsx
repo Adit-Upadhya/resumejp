@@ -126,30 +126,14 @@ export function EditorClient() {
 
       const blob = pdf.output("blob");
       const filename = "rirekisho.pdf";
-
-      // On mobile, prefer Web Share API so the file lands in Downloads/Files
-      // instead of opening in the browser tab.
-      const file = new File([blob], filename, { type: "application/pdf" });
-      if (
-        typeof navigator.canShare === "function" &&
-        navigator.canShare({ files: [file] })
-      ) {
-        try {
-          await navigator.share({ files: [file], title: "Rirekisho" });
-        } catch (shareErr) {
-          // User cancelled the share sheet — not an error
-          if ((shareErr as DOMException)?.name !== "AbortError") throw shareErr;
-        }
-      } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
 
       setDownloaded(true);
       toast.success("PDF downloaded");
