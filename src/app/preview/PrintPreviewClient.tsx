@@ -63,11 +63,20 @@ export function PrintPreviewClient() {
   }, [params]);
 
   useEffect(() => {
-    if (data) {
-      // Signal to Puppeteer that render is done. waitForFunction polls this.
-      (window as unknown as { __rirekishoReady?: boolean }).__rirekishoReady = true;
+    if (!data) return;
+    // Signal to Puppeteer that render is done. waitForFunction polls this.
+    (window as unknown as { __rirekishoReady?: boolean }).__rirekishoReady = true;
+
+    // Auto-print when opened via the Download PDF button (?print=1)
+    if (params.get("print") === "1") {
+      document.fonts.ready.then(() => {
+        setTimeout(() => {
+          window.print();
+          window.addEventListener("afterprint", () => window.close(), { once: true });
+        }, 400);
+      });
     }
-  }, [data, template]);
+  }, [data, template, params]);
 
   if (!data) return null;
   const meta = TEMPLATES[template];

@@ -15,7 +15,7 @@ import {
   Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocalResume } from "@/lib/storage";
+import { useLocalResume, saveResume } from "@/lib/storage";
 import { TEMPLATES } from "@/lib/templates";
 import { useTemplate } from "@/lib/templates-hook";
 import { PersonalForm } from "./forms/PersonalForm";
@@ -85,26 +85,12 @@ export function EditorClient() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  async function downloadPdf() {
-    setBusy("pdf");
-    try {
-      const res = await fetch("/api/pdf", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ resume: data, template }),
-      });
-      if (!res.ok) {
-        const msg = await res.text().catch(() => `PDF generation failed (${res.status})`);
-        throw new Error(msg || `PDF generation failed (${res.status})`);
-      }
-      const blob = await res.blob();
-      saveBlob(blob, "rirekisho.pdf");
-      toast.success("PDF downloaded");
-    } catch (e) {
-      console.error(e);
-      toast.error(e instanceof Error ? e.message : "Failed to generate PDF");
-    } finally {
-      setBusy(null);
+  function downloadPdf() {
+    // Save latest data to localStorage immediately (autosave has a 400ms debounce)
+    saveResume(data);
+    const win = window.open(`/preview?template=${template}&print=1`, "_blank");
+    if (!win) {
+      toast.error("Allow popups for this site, then try again");
     }
   }
 
@@ -149,7 +135,6 @@ export function EditorClient() {
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50">
-      <AnimatePresence>{busy === "pdf" && <PdfLoadingOverlay />}</AnimatePresence>
       <Header
         onImport={importJson}
         onSample={loadSample}
@@ -401,12 +386,8 @@ function PreviewStep({
             <Button variant="outline" onClick={onEdit} className="gap-2">
               <Edit3 className="h-4 w-4" /> Edit
             </Button>
-            <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
-              {busy === "pdf" ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
+            <Button onClick={onDownloadPdf} className="gap-2">
+              <Download className="h-4 w-4" />
               Download PDF
             </Button>
           </div>
@@ -424,12 +405,8 @@ function PreviewStep({
           <Button variant="outline" onClick={onBack} className="gap-2">
             <ArrowLeft className="h-4 w-4" /> Back to editing
           </Button>
-          <Button onClick={onDownloadPdf} disabled={busy === "pdf"} className="gap-2">
-            {busy === "pdf" ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
+          <Button onClick={onDownloadPdf} className="gap-2">
+            <Download className="h-4 w-4" />
             Download PDF
           </Button>
         </div>
