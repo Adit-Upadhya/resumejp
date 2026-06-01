@@ -6,7 +6,7 @@ export function sampleResume(): Resume {
     documentDate: "2025年 1月 1日現在",
     personal: {
       furiganaName: "ラム バハドゥル",
-      fullName: "Ram Bahadur",
+      fullName: "RAM BAHADUR",
       dateOfBirth: "1990-01-01",
       age: "35",
       gender: "male",
