@@ -113,7 +113,13 @@ export default function LandingPage() {
       <footer className="border-t">
         <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} Rirekisho Builder</span>
-          <span>Made for foreigners applying to jobs in Japan.</span>
+          <span>
+            Made for foreigners applying to jobs in Japan. Visit{' '}
+            <a href="https://aditupadhya.com" target="_blank" rel="noreferrer" className="underline hover:text-primary">
+              aditupadhya.com
+            </a>
+            .
+          </span>
         </div>
       </footer>
     </div>
