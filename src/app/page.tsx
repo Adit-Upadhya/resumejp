@@ -114,9 +114,8 @@ export default function LandingPage() {
         <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} Rirekisho Builder</span>
           <span>
-            Designed by DIGI スタート！ Visit{' '}
             <a href="https://www.digistartjp.com/" target="_blank" rel="noreferrer" className="underline hover:text-primary">
-              digistartjp.com
+              Designed by DIGI スタート！
             </a>
           </span>
         </div>
