@@ -31,6 +31,7 @@ export interface LandingCopy {
     heading: string;
     sub: string;
     use: (name: string) => string;
+    downloadBlank: string;
     templateDescriptions: Record<TemplateKey, string>;
   };
   resumeTypes: {
@@ -99,6 +100,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
       heading: "Four templates. Same data.",
       sub: "Switch layouts any time without retyping a thing.",
       use: (name) => `Use ${name}`,
+      downloadBlank: "Download blank template",
       templateDescriptions: {
         "jis-a3":
           "Traditional 観音開き layout printed on A3 landscape — what most Japanese companies expect.",
@@ -250,6 +252,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
       heading: "4つのテンプレート、同じデータ。",
       sub: "入力し直すことなく、いつでもレイアウトを切り替えられます。",
       use: (name) => `${name} を使う`,
+      downloadBlank: "空欄テンプレートをダウンロード",
       templateDescriptions: {
         "jis-a3": "観音開きのA3横レイアウト。日本企業で最も一般的な形式です。",
         "jis-a4": "同じJIS項目をA4縦1枚にまとめた形式です。",

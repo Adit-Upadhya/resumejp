@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import "@/components/rirekisho/sheet.css";
 import { Sheet } from "@/components/rirekisho/Sheet";
 import { sampleResume } from "@/lib/sample";
+import { emptyResume } from "@/lib/schema";
+import { downloadSheetPdf } from "@/lib/pdf";
 import { TEMPLATE_LIST, type TemplateKey } from "@/lib/templates";
 import { Button } from "@/components/ui/button";
 import type { Lang, LandingCopy } from "@/lib/i18n";
@@ -49,6 +52,25 @@ export function PreviewMock({
 
   const scale = stageW / sheetW;
   const stageH = sheetH * scale;
+
+  // Blank copy of the resume used for the off-screen "download template" capture.
+  const blank = useMemo(() => emptyResume(), []);
+  const [busy, setBusy] = useState(false);
+
+  async function handleDownloadBlank() {
+    setBusy(true);
+    try {
+      const el = document.querySelector<HTMLElement>("[data-landing-template-capture]");
+      if (!el) throw new Error("Template element not found.");
+      await downloadSheetPdf(el, meta, `rirekisho-${active}-blank.pdf`);
+      toast.success(copy.downloadBlank);
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to generate template");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <div
@@ -129,13 +151,38 @@ export function PreviewMock({
             {activeDescription}
           </p>
         </div>
-        <div className="mt-4 text-center">
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button asChild size="lg">
             <Link href="/editor">
               {copy.use(activeName)}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleDownloadBlank}
+            disabled={busy}
+            className="gap-2"
+          >
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            {copy.downloadBlank}
+          </Button>
+        </div>
+      </div>
+
+      {/* Off-screen full-size blank sheet captured by "Download blank template",
+          rendered for whichever template tab is active. */}
+      <div
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-10000px", top: 0, pointerEvents: "none" }}
+      >
+        <div data-landing-template-capture>
+          <Sheet template={active} data={blank} />
         </div>
       </div>
     </div>

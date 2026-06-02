@@ -36,6 +36,7 @@ import {
 } from "@/lib/i18n";
 import { LangToggle } from "@/components/LangToggle";
 import { emptyResume } from "@/lib/schema";
+import { downloadSheetPdf } from "@/lib/pdf";
 import { Sheet } from "@/components/rirekisho/Sheet";
 import { PersonalForm } from "./forms/PersonalForm";
 import { EducationForm } from "./forms/EducationForm";
@@ -108,60 +109,12 @@ export function EditorClient() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  /**
-   * Captures the given on-screen sheet element to a PDF sized to the current
-   * template. Shared by the filled-in "Download PDF" and the blank
-   * "Download template" actions.
-   */
-  async function captureSheetToPdf(el: HTMLElement, filename: string) {
-    const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
-      import("html2canvas"),
-      import("jspdf"),
-    ]);
-
-    const meta = TEMPLATES[template];
-
-    const savedTransform = el.style.transform;
-    el.style.transform = "none";
-
-    let canvas: HTMLCanvasElement;
-    try {
-      canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-      });
-    } finally {
-      el.style.transform = savedTransform;
-    }
-
-    const pdf = new jsPDF({
-      orientation: meta.orientation === "landscape" ? "landscape" : "portrait",
-      unit: "mm",
-      format: meta.paper.toLowerCase() as "a3" | "a4",
-    });
-
-    const imgData = canvas.toDataURL("image/jpeg", 0.97);
-    pdf.addImage(imgData, "JPEG", 0, 0, meta.widthMm, meta.heightMm);
-
-    const blob = pdf.output("blob");
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
   async function downloadPdf() {
     setBusy("pdf");
     try {
       const el = document.querySelector<HTMLElement>("[data-sheet-capture]");
       if (!el) throw new Error(t.toasts.sheetNotFound);
-      await captureSheetToPdf(el, "rirekisho.pdf");
+      await downloadSheetPdf(el, TEMPLATES[template], "rirekisho.pdf");
       setDownloaded(true);
       toast.success(t.toasts.pdfDownloaded);
     } catch (e) {
@@ -177,7 +130,7 @@ export function EditorClient() {
     try {
       const el = document.querySelector<HTMLElement>("[data-sheet-template-capture]");
       if (!el) throw new Error(t.toasts.sheetNotFound);
-      await captureSheetToPdf(el, "rirekisho-blank-template.pdf");
+      await downloadSheetPdf(el, TEMPLATES[template], "rirekisho-blank-template.pdf");
       toast.success(t.toasts.templateDownloaded);
     } catch (e) {
       console.error(e);
