@@ -202,6 +202,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${inter.variable} ${notoJp.variable} ${notoSerifJp.variable} ${bizGothic.variable} ${zenGothic.variable} ${shipporiMincho.variable}`}
     >
+      <head>
+        <meta name="google-adsense-account" content="ca-pub-6450900255050645" />
+      </head>
       <body className="font-sans antialiased">
         <JsonLd />
         {children}
