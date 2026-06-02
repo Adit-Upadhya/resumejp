@@ -122,7 +122,16 @@ function resolveSelfOrigin(req: Request): string {
 function isPrivateHost(hostname: string): boolean {
   const h = hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (h === "localhost" || h.endsWith(".localhost")) return true;
-  if (h === "::1" || h.startsWith("fc") || h.startsWith("fd") || h.startsWith("fe80")) return true;
+
+  // IPv6 literals contain a colon — only then apply IPv6 private/loopback
+  // checks, so real domains that merely start with "fc"/"fd" aren't flagged.
+  if (h.includes(":")) {
+    if (h === "::1") return true; // loopback
+    if (h.startsWith("fc") || h.startsWith("fd")) return true; // unique-local
+    if (h.startsWith("fe80")) return true; // link-local
+    return false;
+  }
+
   // IPv4 private / loopback / link-local ranges.
   const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
   if (m) {
