@@ -33,6 +33,16 @@ export interface LandingCopy {
     use: (name: string) => string;
     templateDescriptions: Record<TemplateKey, string>;
   };
+  resumeTypes: {
+    heading: string;
+    sub: string;
+    categories: {
+      title: string;
+      jp: string;
+      blurb: string;
+      items: { name: string; jp: string; desc: string }[];
+    }[];
+  };
   cta: { heading: string; sub: string; button: string };
 }
 
@@ -97,6 +107,90 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
           "2021 government-recommended layout — no gender, spouse, or commute fields. Modern and inclusive.",
         "modern-a4": "Minimal single-column A4 design for tech/startup applications.",
       },
+    },
+    resumeTypes: {
+      heading: "Every Japanese resume format, in one place",
+      sub: "Whatever role you're applying for in Japan — full-time, career change, new grad, part-time, or a global tech job — there's a format built for it.",
+      categories: [
+        {
+          title: "Standard Full-Time Resumes",
+          jp: "履歴書 · Rirekisho",
+          blurb: "The fixed-format Japanese resume every employer recognises.",
+          items: [
+            {
+              name: "MHLW Government Standard",
+              jp: "厚生労働省様式",
+              desc: "The modern universal default for business and tech, with an optional gender field and a balanced split between personal data and self-promotion.",
+            },
+            {
+              name: "JIS Traditional Layout",
+              jp: "JIS規格様式",
+              desc: "The conservative legacy template that devotes roughly 70% of the sheet to your chronological school and work timeline.",
+            },
+            {
+              name: "Mid-Career / Changer",
+              jp: "転職用様式",
+              desc: "A marketing-oriented profile for experienced professionals switching companies, with resignation-reason and expanded skill-selling columns.",
+            },
+            {
+              name: "New Graduate",
+              jp: "新卒用様式",
+              desc: "A potential-focused layout for university seniors — empty work grids are replaced with prompts for research, seminars, and clubs.",
+            },
+          ],
+        },
+        {
+          title: "Work History Documents",
+          jp: "職務経歴書 · Shokumukeirekisho",
+          blurb: "The free-form companion sheet that sells your experience.",
+          items: [
+            {
+              name: "Reverse-Chronological",
+              jp: "逆編年体形式",
+              desc: "Most recent role first — the engineering gold standard for showing recruiters your current tech stack and senior capabilities.",
+            },
+            {
+              name: "Standard Chronological",
+              jp: "編年体形式",
+              desc: "Oldest role first, moving forward — best for legacy industries to visualise linear promotions and steady tenure.",
+            },
+            {
+              name: "Functional / Career",
+              jp: "キャリア形式",
+              desc: "Grouped by skill pillars like Cloud Architecture or Frontend — ideal for freelancers or anyone managing employment gaps.",
+            },
+          ],
+        },
+        {
+          title: "Part-Time & Flexible Work",
+          jp: "パート・アルバイト・派遣",
+          blurb: "Compact formats built for shift work and staffing pools.",
+          items: [
+            {
+              name: "Part-Time & Arubaito",
+              jp: "パート・アルバイト用",
+              desc: "A compact single-page form that minimises deep career history and centres a large weekly shift-availability grid.",
+            },
+            {
+              name: "Dispatch Agency Profile",
+              jp: "派遣登録用",
+              desc: "A logistics sheet for temporary staffing registration with an itemised checklist of software, certifications, and typing speed.",
+            },
+          ],
+        },
+        {
+          title: "International Tech & Corporate",
+          jp: "英文レジュメ · English CV",
+          blurb: "English-first formats for global hiring inside Japan.",
+          items: [
+            {
+              name: "Western CV / English Resume",
+              jp: "英文履歴書",
+              desc: "A single-page, metrics-driven English document with no photo, birth date, age, or gender — aligned to global anti-bias standards for international tech hubs and multinationals in Tokyo.",
+            },
+          ],
+        },
+      ],
     },
     cta: {
       heading: "Build your rirekisho in minutes",
@@ -163,6 +257,90 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
           "2021年の厚生労働省推奨様式。性別・配偶者・通勤の欄がなく、現代的で包括的です。",
         "modern-a4": "IT・スタートアップ向けの、ミニマルな1カラムA4デザインです。",
       },
+    },
+    resumeTypes: {
+      heading: "日本の履歴書フォーマットを、すべて一か所で",
+      sub: "正社員、転職、新卒、アルバイト、グローバルなIT職まで。日本での応募に合わせた様式が揃っています。",
+      categories: [
+        {
+          title: "正社員向け履歴書",
+          jp: "履歴書 · Rirekisho",
+          blurb: "どの企業にも通じる、定型の日本式履歴書。",
+          items: [
+            {
+              name: "厚生労働省様式",
+              jp: "MHLW Government Standard",
+              desc: "一般企業・技術職向けの現代的な標準様式。性別欄は任意で、個人情報と自己PRをバランスよく配置します。",
+            },
+            {
+              name: "JIS規格様式",
+              jp: "JIS Traditional",
+              desc: "保守的な従来様式。シートの約70%を学歴・職歴の年表に充てます。",
+            },
+            {
+              name: "転職用様式",
+              jp: "Mid-Career",
+              desc: "経験者向けのアピール重視プロフィール。退職理由欄や、拡張されたスキルPR欄を備えます。",
+            },
+            {
+              name: "新卒用様式",
+              jp: "New Graduate",
+              desc: "実務経験のない学生向け。空欄の職歴欄に代えて、研究・ゼミ・サークルの記入欄を用意します。",
+            },
+          ],
+        },
+        {
+          title: "職務経歴書",
+          jp: "職務経歴書 · Shokumukeirekisho",
+          blurb: "経験を売り込む、自由記述の添付書類。",
+          items: [
+            {
+              name: "逆編年体形式",
+              jp: "Reverse-Chronological",
+              desc: "直近の職務を最上部に。現在の技術スタックと役職レベルを即座に伝える、エンジニアの定番です。",
+            },
+            {
+              name: "編年体形式",
+              jp: "Chronological",
+              desc: "古い職務から時系列で記載。昇進や勤続を見せたい伝統的な業界に最適です。",
+            },
+            {
+              name: "キャリア形式",
+              jp: "Functional",
+              desc: "「クラウド設計」「フロントエンド」などスキル別に整理。フリーランスや空白期間がある方に向いています。",
+            },
+          ],
+        },
+        {
+          title: "パート・アルバイト・派遣",
+          jp: "パート・アルバイト・派遣",
+          blurb: "シフト勤務や登録向けの、コンパクトな様式。",
+          items: [
+            {
+              name: "パート・アルバイト用",
+              jp: "Part-Time / Arubaito",
+              desc: "1枚完結。詳細な経歴より、週間シフト希望の記入欄を中心に配置します。",
+            },
+            {
+              name: "派遣登録用",
+              jp: "Dispatch Registration",
+              desc: "登録向けの実務シート。ソフト・資格・タイピング速度を項目化したチェックリスト形式です。",
+            },
+          ],
+        },
+        {
+          title: "英文レジュメ",
+          jp: "英文レジュメ · English CV",
+          blurb: "外資・グローバル採用向けの英語フォーマット。",
+          items: [
+            {
+              name: "英文履歴書",
+              jp: "Western CV / English Resume",
+              desc: "成果を数値で示す1枚の英語書類。写真・生年月日・年齢・性別を省き、国際基準に準拠。東京の外資・グローバルテック向けです。",
+            },
+          ],
+        },
+      ],
     },
     cta: {
       heading: "数分で履歴書が完成",

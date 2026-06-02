@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Hero } from "@/components/landing/Hero";
 import { FeatureCard } from "@/components/landing/FeatureCard";
 import { PreviewMock } from "@/components/landing/PreviewMock";
+import { ResumeTypes } from "@/components/landing/ResumeTypes";
 import { LangToggle } from "@/components/LangToggle";
 import { useLang, LANDING_COPY } from "@/lib/i18n";
 
@@ -81,6 +82,9 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* Resume formats catalogue (SEO long-tail content) */}
+      <ResumeTypes copy={c.resumeTypes} />
 
       {/* Preview mock */}
       <section className="container pb-24">

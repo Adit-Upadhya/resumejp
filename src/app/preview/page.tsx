@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PrintPreviewClient } from "./PrintPreviewClient";
 
@@ -8,6 +9,11 @@ import { PrintPreviewClient } from "./PrintPreviewClient";
  * via the client component.
  */
 export const dynamic = "force-dynamic";
+
+// Headless render surface for PDF export — keep it out of search indexes.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default function PreviewPage() {
   return (
