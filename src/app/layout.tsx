@@ -9,6 +9,7 @@ import {
 } from "next/font/google";
 import { Toaster } from "sonner";
 import { FAQ_EN } from "@/lib/faq";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -224,6 +225,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script dangerouslySetInnerHTML={{ __html: "(adsbygoogle = window.adsbygoogle || []).push({});" }} />
         <Toaster position="bottom-right" />
+        <Analytics />
       </body>
     </html>
   );
