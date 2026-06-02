@@ -32,6 +32,12 @@ export function PrintPreviewClient() {
     const encoded = params.get("data");
     const isPuppeteer = params.get("puppeteer") === "1";
 
+    // ?blank=1 → render an empty template (used by "Download blank template").
+    if (params.get("blank") === "1") {
+      setData(emptyResume());
+      return;
+    }
+
     if (isPuppeteer) {
       // Data is injected by Puppeteer via page.evaluate() after domcontentloaded.
       // Poll until it appears (usually already set by the time useEffect runs).

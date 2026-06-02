@@ -58,6 +58,14 @@ export function PreviewMock({
   const [busy, setBusy] = useState(false);
 
   async function handleDownloadBlank() {
+    // Prefer the browser's print engine (pixel-perfect, no raster artifacts);
+    // fall back to the in-page capture if the popup is blocked.
+    const w = window.open(
+      `/preview?print=1&blank=1&template=${active}`,
+      "_blank",
+      "noopener",
+    );
+    if (w) return;
     setBusy(true);
     try {
       const el = document.querySelector<HTMLElement>("[data-landing-template-capture]");

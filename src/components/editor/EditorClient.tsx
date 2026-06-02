@@ -18,7 +18,7 @@ import {
   Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocalResume } from "@/lib/storage";
+import { useLocalResume, saveResume } from "@/lib/storage";
 import { TEMPLATES, type TemplateKey } from "@/lib/templates";
 import { useTemplate } from "@/lib/templates-hook";
 import {
@@ -109,7 +109,30 @@ export function EditorClient() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  /**
+   * Opens the standalone /preview page in a new tab with ?print=1 so the
+   * browser's own print engine renders the sheet (pixel-identical to the live
+   * preview) and the user saves it as a PDF. This avoids the html2canvas
+   * rasterisation artifacts (text overlapping cell borders). Returns false if
+   * the popup was blocked, so callers can fall back to the in-page capture.
+   */
+  function openPrintWindow(extra = ""): boolean {
+    // Flush the latest resume so the new tab (same origin) renders current data.
+    saveResume(data);
+    const w = window.open(
+      `/preview?print=1&template=${template}${extra}`,
+      "_blank",
+      "noopener",
+    );
+    return !!w;
+  }
+
   async function downloadPdf() {
+    if (openPrintWindow()) {
+      setDownloaded(true);
+      return;
+    }
+    // Popup blocked — fall back to the in-page raster capture.
     setBusy("pdf");
     try {
       const el = document.querySelector<HTMLElement>("[data-sheet-capture]");
@@ -126,6 +149,8 @@ export function EditorClient() {
   }
 
   async function downloadTemplate() {
+    if (openPrintWindow("&blank=1")) return;
+    // Popup blocked — fall back to the in-page raster capture.
     setBusy("pdf");
     try {
       const el = document.querySelector<HTMLElement>("[data-sheet-template-capture]");

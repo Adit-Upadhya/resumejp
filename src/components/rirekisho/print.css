@@ -11,3 +11,10 @@ body {
   margin: 0 !important;
   box-shadow: none !important;
 }
+
+/* The /preview page is a pure render surface for PDF/print — never show ads
+   here, so they can't leak into the printed resume or add a blank page. */
+ins.adsbygoogle,
+.adsbygoogle {
+  display: none !important;
+}
