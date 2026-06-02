@@ -15,6 +15,8 @@ import { Hero } from "@/components/landing/Hero";
 import { FeatureCard } from "@/components/landing/FeatureCard";
 import { PreviewMock } from "@/components/landing/PreviewMock";
 import { ResumeTypes } from "@/components/landing/ResumeTypes";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { FaqSection } from "@/components/landing/FaqSection";
 import { LangToggle } from "@/components/LangToggle";
 import { useLang, LANDING_COPY } from "@/lib/i18n";
 
@@ -83,6 +85,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* How it works (steps content) */}
+      <HowItWorks copy={c.howItWorks} />
+
       {/* Resume formats catalogue (SEO long-tail content) */}
       <ResumeTypes copy={c.resumeTypes} />
 
@@ -90,6 +95,9 @@ export default function LandingPage() {
       <section className="container pb-24">
         <PreviewMock lang={lang} copy={c.preview} />
       </section>
+
+      {/* FAQ (visible + backs the FAQPage JSON-LD) */}
+      <FaqSection copy={c.faq} />
 
       {/* CTA strip */}
       <section className="container pb-28">

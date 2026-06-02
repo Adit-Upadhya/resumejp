@@ -2,6 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import type { TemplateKey } from "./templates";
+import { FAQ_EN } from "./faq";
+
+export { FAQ_EN };
 
 /**
  * Lightweight i18n for the marketing/landing page. The toggle in the nav
@@ -43,6 +46,16 @@ export interface LandingCopy {
       blurb: string;
       items: { name: string; jp: string; desc: string }[];
     }[];
+  };
+  howItWorks: {
+    heading: string;
+    sub: string;
+    steps: { title: string; desc: string }[];
+  };
+  faq: {
+    heading: string;
+    sub: string;
+    items: { q: string; a: string }[];
   };
   cta: { heading: string; sub: string; button: string };
 }
@@ -194,6 +207,33 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
         },
       ],
     },
+    howItWorks: {
+      heading: "How it works",
+      sub: "From a blank form to a print-ready Japanese resume in four steps — no Japanese keyboard or design skills needed.",
+      steps: [
+        {
+          title: "1. Pick a template",
+          desc: "Choose the JIS or MHLW rirekisho, a mid-career, new-grad, part-time, or English CV layout. Switch any time without losing your data.",
+        },
+        {
+          title: "2. Fill it in any language",
+          desc: "Use the step-by-step editor to enter your details in English, Nepali, or Japanese. A live preview updates as you type.",
+        },
+        {
+          title: "3. Convert to natural Japanese",
+          desc: "One click rewrites every field into polished business Japanese (keigo) that matches what Japanese employers expect.",
+        },
+        {
+          title: "4. Download a print-ready PDF",
+          desc: "Export an A3 or A4 PDF sized exactly to the standard form — ready to email or print. Free, no signup.",
+        },
+      ],
+    },
+    faq: {
+      heading: "Frequently asked questions",
+      sub: "Everything about building a Japanese resume (履歴書) and work-history sheet (職務経歴書).",
+      items: FAQ_EN,
+    },
     cta: {
       heading: "Build your rirekisho in minutes",
       sub: "Free, no signup, no email. Open the editor, fill in what you have, download the PDF.",
@@ -342,6 +382,66 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
               desc: "成果を数値で示す1枚の英語書類。写真・生年月日・年齢・性別を省き、国際基準に準拠。東京の外資・グローバルテック向けです。",
             },
           ],
+        },
+      ],
+    },
+    howItWorks: {
+      heading: "使い方",
+      sub: "空欄のフォームから、印刷できる日本式の履歴書まで4ステップ。日本語キーボードもデザインの知識も不要です。",
+      steps: [
+        {
+          title: "1. テンプレートを選ぶ",
+          desc: "JISまたは厚生労働省様式の履歴書、転職・新卒・アルバイト用、英文CVから選択。データを保ったまま、いつでも切り替えられます。",
+        },
+        {
+          title: "2. どの言語でも入力",
+          desc: "ステップ式エディターで、英語・ネパール語・日本語のいずれでも入力。入力に合わせてプレビューがリアルタイムで更新されます。",
+        },
+        {
+          title: "3. 自然な日本語へ変換",
+          desc: "ワンクリックで各項目を、日本企業が求める整ったビジネス日本語（敬語）に書き換えます。",
+        },
+        {
+          title: "4. 印刷用PDFをダウンロード",
+          desc: "標準様式に正確に合わせたA3またはA4のPDFを出力。メールや印刷にそのまま使えます。無料・登録不要。",
+        },
+      ],
+    },
+    faq: {
+      heading: "よくある質問",
+      sub: "日本式の履歴書・職務経歴書の作成に関するご質問にお答えします。",
+      items: [
+        {
+          q: "ResumeJPは無料ですか？",
+          a: "はい、完全無料です。登録もメールも不要。データはブラウザ内に保存され、印刷用PDFをすぐにダウンロードできます。",
+        },
+        {
+          q: "履歴書と職務経歴書の違いは何ですか？",
+          a: "履歴書は、写真・学歴・職歴を定型フォーマットでまとめた個人プロフィールです。職務経歴書は、担当業務・スキル・実績を自由記述で詳しく書く書類です。日本の中途採用では両方を提出するのが一般的で、ResumeJPはどちらにも対応しています。",
+        },
+        {
+          q: "英語で履歴書を作成できますか？",
+          a: "はい。英語・ネパール語・日本語で入力し、ワンクリックで各項目を自然なビジネス日本語に書き換えられます。外資・グローバルテック向けの英文履歴書（英文CV）フォーマットもあります。",
+        },
+        {
+          q: "どのテンプレートを使えばいいですか？",
+          a: "正社員には厚生労働省様式またはJIS履歴書、転職時は転職用、学生は新卒用、シフト勤務はパート・アルバイト用、外資には英文CVが適しています。入力し直さずにいつでも切り替えられます。",
+        },
+        {
+          q: "履歴書に写真を追加できますか？",
+          a: "はい。写真（最大5MB）をアップロードすると、右上の標準的な30×40mmの写真欄に合わせて自動でリサイズされます。",
+        },
+        {
+          q: "どの形式で出力できますか？",
+          a: "正しいA3・A4サイズの高解像度の印刷用PDFに加え、XeLaTeXの.texソースと再読み込み可能なJSONバックアップを出力できます。手書き用の空欄テンプレートもダウンロードできます。",
+        },
+        {
+          q: "データのプライバシーは守られますか？",
+          a: "はい。すべてブラウザ内で動作します。履歴書はご自身の端末のローカルストレージに保存され、サーバーには一切保存されません。タブを閉じればデータは消えます。",
+        },
+        {
+          q: "アルバイトや派遣にも使えますか？",
+          a: "はい。週間シフト希望やスキルのチェックリストを重視した、コンパクトなパート・アルバイト用および派遣登録用のレイアウトを用意しています。",
         },
       ],
     },

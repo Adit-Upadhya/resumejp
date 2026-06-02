@@ -8,6 +8,7 @@ import {
   Shippori_Mincho,
 } from "next/font/google";
 import { Toaster } from "sonner";
+import { FAQ_EN } from "@/lib/faq";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -148,46 +149,40 @@ function JsonLd() {
       {
         "@type": "FAQPage",
         "@id": `${SITE_URL}/#faq`,
-        mainEntity: [
+        mainEntity: FAQ_EN.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      },
+      {
+        "@type": "HowTo",
+        "@id": `${SITE_URL}/#howto`,
+        name: "How to make a Japanese resume (履歴書)",
+        description:
+          "Create a JIS or MHLW Japanese resume (rirekisho) in any language and export a print-ready PDF — for free.",
+        totalTime: "PT5M",
+        estimatedCost: { "@type": "MonetaryAmount", currency: "USD", value: "0" },
+        step: [
           {
-            "@type": "Question",
-            name: "What is a rirekisho (履歴書)?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A rirekisho is the standard Japanese resume. It follows a fixed grid format (commonly the JIS or MHLW layout) with personal details, a photo, an academic and work-history timeline, licenses, and a self-promotion section. ResumeJP generates print-ready rirekisho PDFs for free.",
-            },
+            "@type": "HowToStep",
+            name: "Pick a template",
+            text: "Choose the JIS or MHLW rirekisho, or a mid-career, new-grad, part-time, or English CV layout.",
           },
           {
-            "@type": "Question",
-            name: "What is the difference between a 履歴書 and a 職務経歴書?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "The 履歴書 (rirekisho) is a fixed-format personal profile, while the 職務経歴書 (shokumukeirekisho) is a free-form work-history document that details your roles, skills, and achievements. Mid-career applicants in Japan usually submit both.",
-            },
+            "@type": "HowToStep",
+            name: "Fill it in any language",
+            text: "Enter your details in English, Nepali, or Japanese using the step-by-step editor with a live preview.",
           },
           {
-            "@type": "Question",
-            name: "Which Japanese resume template should I use for a part-time (arubaito) job?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "For part-time or arubaito roles, use a compact single-page layout that emphasises weekly shift availability rather than deep academic and career history. ResumeJP includes part-time and dispatch-registration formats alongside full-time templates.",
-            },
+            "@type": "HowToStep",
+            name: "Convert to natural Japanese",
+            text: "Click translate to rewrite every field into polished business Japanese that employers expect.",
           },
           {
-            "@type": "Question",
-            name: "Can I make a Japanese resume in English?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. You can type your details in English, Nepali, or Japanese, and ResumeJP converts each section into natural business Japanese. There is also an English résumé (Western CV) format for international and global tech roles in Japan.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is ResumeJP free?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes, ResumeJP is completely free with no signup. Your data stays in your browser and you can download a print-ready PDF instantly.",
-            },
+            "@type": "HowToStep",
+            name: "Download a print-ready PDF",
+            text: "Export an A3 or A4 PDF sized exactly to the standard form, ready to email or print.",
           },
         ],
       },
