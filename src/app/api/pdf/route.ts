@@ -28,7 +28,12 @@ export async function POST(req: Request) {
   const meta = TEMPLATES[template];
 
   const json = JSON.stringify(parsed.data);
-  const origin = originFromRequest(req);
+  let origin: string;
+  try {
+    origin = resolveSelfOrigin(req);
+  } catch {
+    return NextResponse.json({ error: "Untrusted request origin" }, { status: 400 });
+  }
   const url = `${origin}/preview?template=${template}&puppeteer=1`;
 
   // Dynamic imports — avoids webpack converting static imports to require() for ESM-only packages
@@ -92,7 +97,41 @@ export async function POST(req: Request) {
   }
 }
 
-function originFromRequest(req: Request): string {
+/**
+ * Origin that Puppeteer should navigate to in order to render OUR /preview
+ * page. Puppeteer should only ever hit this app, so we prefer an explicitly
+ * trusted origin from the environment and otherwise fall back to the request
+ * origin — rejecting private/loopback/link-local hosts (e.g. cloud metadata
+ * at 169.254.169.254) in production to prevent Host-header SSRF.
+ */
+function resolveSelfOrigin(req: Request): string {
+  const configured =
+    process.env.PUBLIC_BASE_URL ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : undefined);
+  if (configured) return new URL(configured).origin;
+
   const url = new URL(req.url);
-  return `${url.protocol}//${url.host}`;
+  if (process.env.NODE_ENV === "production" && isPrivateHost(url.hostname)) {
+    throw new Error("Refusing to render from a private/loopback host");
+  }
+  return url.origin;
+}
+
+function isPrivateHost(hostname: string): boolean {
+  const h = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  if (h === "localhost" || h.endsWith(".localhost")) return true;
+  if (h === "::1" || h.startsWith("fc") || h.startsWith("fd") || h.startsWith("fe80")) return true;
+  // IPv4 private / loopback / link-local ranges.
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (m) {
+    const [a, b] = [Number(m[1]), Number(m[2])];
+    if (a === 10 || a === 127) return true;
+    if (a === 169 && b === 254) return true; // link-local incl. cloud metadata
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 0) return true;
+  }
+  return false;
 }
