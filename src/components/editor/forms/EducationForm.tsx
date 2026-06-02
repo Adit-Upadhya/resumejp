@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import type { HistoryEntry, Resume } from "@/lib/schema";
 import { newId } from "@/lib/schema";
+import { useEditorI18n } from "@/lib/i18n";
 import { FormSection } from "./Field";
 import { RowList } from "./RowList";
 
@@ -12,14 +13,13 @@ interface Props {
 }
 
 export function EducationForm({ data, setData }: Props) {
+  const { copy } = useEditorI18n();
+  const c = copy.education;
   function setEdu(updater: (rows: HistoryEntry[]) => HistoryEntry[]) {
     setData((prev) => ({ ...prev, education: updater(prev.education) }));
   }
   return (
-    <FormSection
-      title="Education · 学歴"
-      description="Add one row per milestone. Enter dates and a single line of free text. Order matches the rendered table (oldest at top)."
-    >
+    <FormSection title={c.title} description={c.description}>
       <RowList<HistoryEntry>
         items={data.education}
         onAdd={() =>
@@ -37,8 +37,8 @@ export function EducationForm({ data, setData }: Props) {
             return next;
           })
         }
-        addLabel="Add education row"
-        empty={<EmptyHint>No education yet — add your first school.</EmptyHint>}
+        addLabel={c.add}
+        empty={<EmptyHint>{c.empty}</EmptyHint>}
         renderItem={(item, update) => (
           <div className="grid grid-cols-12 gap-2">
             <Input

@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { Sheet } from "@/components/rirekisho/Sheet";
 import type { Resume } from "@/lib/schema";
 import { TEMPLATES, type TemplateKey } from "@/lib/templates";
+import { DEFAULT_SHEET_STYLE, type SheetStyle } from "@/lib/sheet-style";
 
 interface Props {
   data: Resume;
   template: TemplateKey;
+  style?: SheetStyle;
 }
 
 const PX_PER_MM = 96 / 25.4;
@@ -17,7 +19,7 @@ const PX_PER_MM = 96 / 25.4;
  * down to fit the parent's width. The wrapper occupies the scaled box so
  * the layout doesn't reserve the full 1587px the un-scaled sheet would.
  */
-export function Preview({ data, template }: Props) {
+export function Preview({ data, template, style = DEFAULT_SHEET_STYLE }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const meta = TEMPLATES[template];
   const sheetW = meta.widthMm * PX_PER_MM;
@@ -52,7 +54,7 @@ export function Preview({ data, template }: Props) {
             transformOrigin: "top left",
           }}
         >
-          <Sheet template={template} data={data} />
+          <Sheet template={template} data={data} style={style} />
         </div>
       </div>
     </div>

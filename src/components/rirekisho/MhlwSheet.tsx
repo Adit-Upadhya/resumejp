@@ -27,10 +27,10 @@ function emptyLicense(): LicenseEntry {
   return { id: "_", year: "", month: "", name: "" };
 }
 
-export const MhlwSheet = forwardRef<HTMLDivElement, { data: Resume }>(function MhlwSheet(
-  { data },
-  ref,
-) {
+export const MhlwSheet = forwardRef<
+  HTMLDivElement,
+  { data: Resume; styleVars?: React.CSSProperties }
+>(function MhlwSheet({ data, styleVars }, ref) {
   const p = data.personal;
   const same = p.contactSameAsAbove;
 
@@ -44,7 +44,7 @@ export const MhlwSheet = forwardRef<HTMLDivElement, { data: Resume }>(function M
   const licenses = pad(data.licenses, LICENSE_ROWS, emptyLicense);
 
   return (
-    <div ref={ref} className="rirekisho-root a4-root mhlw-root">
+    <div ref={ref} className="rirekisho-root a4-root mhlw-root" style={styleVars}>
       <section className="page page-a4">
         <header className="page-head">
           <h1>履 歴 書</h1>
@@ -94,12 +94,10 @@ export const MhlwSheet = forwardRef<HTMLDivElement, { data: Resume }>(function M
               </td>
             </tr>
             <tr>
-              <td className="addr-cell">
+              <td colSpan={2} className="addr-cell">
                 <div className="contact-line">
                   <span className="lbl-sm">電話</span> {p.phone}
                 </div>
-              </td>
-              <td className="addr-cell">
                 <div className="contact-line">
                   <span className="lbl-sm">メール</span> {p.email}
                 </div>

@@ -47,10 +47,12 @@ function emptyLicense(): LicenseEntry {
 
 interface Props {
   data: Resume;
+  /** Inline CSS custom properties for the user-selected font + boldness. */
+  styleVars?: React.CSSProperties;
 }
 
 export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function RirekishoSheet(
-  { data },
+  { data, styleVars },
   ref,
 ) {
   // 学歴 header + entries, 職歴 header + entries, end marker.
@@ -71,7 +73,7 @@ export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function Rirekis
   const contactSame = p.contactSameAsAbove;
 
   return (
-    <div ref={ref} className="rirekisho-root">
+    <div ref={ref} className="rirekisho-root" style={styleVars}>
       <section className="page">
         <div className="columns">
           {/* ============= LEFT COLUMN ============= */}
@@ -127,17 +129,17 @@ export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function Rirekis
                 </tr>
                 <tr>
                   <td className="lbl" rowSpan={2}>現住所</td>
-                  <td colSpan={4} className="addr-cell">
+                  <td colSpan={3} className="addr-cell">
                     <div className="postal">〒{formatPostalCode(p.postalCode)}</div>
                     <div className="addr">{p.address}</div>
                   </td>
                   <td className="lbl-sm">電話</td>
-                  <td className="cell-phone">{p.phone}</td>
+                  <td className="cell-phone" colSpan={2}>{p.phone}</td>
                 </tr>
                 <tr>
-                  <td colSpan={4} />
+                  <td colSpan={3} />
                   <td className="lbl-sm">メールアドレス</td>
-                  <td className="cell-mail">{p.email}</td>
+                  <td className="cell-mail" colSpan={2}>{p.email}</td>
                 </tr>
                 <tr>
                   <td className="lbl">ふりがな</td>
@@ -145,7 +147,7 @@ export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function Rirekis
                 </tr>
                 <tr>
                   <td className="lbl" rowSpan={2}>連絡先</td>
-                  <td colSpan={4} className="addr-cell">
+                  <td colSpan={3} className="addr-cell">
                     {contactSame ? (
                       <div className="same-as-above">同上</div>
                     ) : (
@@ -157,25 +159,17 @@ export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function Rirekis
                     )}
                   </td>
                   <td className="lbl-sm">電話</td>
-                  <td className="cell-phone">{contactSame ? "" : p.contactPhone}</td>
+                  <td className="cell-phone" colSpan={2}>{contactSame ? "" : p.contactPhone}</td>
                 </tr>
                 <tr>
-                  <td colSpan={4} />
+                  <td colSpan={3} />
                   <td className="lbl-sm">メールアドレス</td>
-                  <td className="cell-mail">{contactSame ? "" : p.contactEmail}</td>
+                  <td className="cell-mail" colSpan={2}>{contactSame ? "" : p.contactEmail}</td>
                 </tr>
               </tbody>
             </table>
 
             <HistoryTable rows={leftRows} />
-
-            <div className="footnote">
-              <span className="footnote-label">記入上の注意</span>
-              <span>
-                1．鉛筆以外の黒又は青の筆記具で記入。 2．数字はアラビア数字で、文字はくずさず正確に書く。
-                3．※印のところは、該当するものを○で囲む。
-              </span>
-            </div>
           </div>
 
           {/* ============= RIGHT COLUMN ============= */}

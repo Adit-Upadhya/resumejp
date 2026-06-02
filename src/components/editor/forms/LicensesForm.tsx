@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import type { LicenseEntry, Resume } from "@/lib/schema";
 import { newId } from "@/lib/schema";
+import { useEditorI18n } from "@/lib/i18n";
 import { FormSection } from "./Field";
 import { RowList } from "./RowList";
 
@@ -12,14 +13,13 @@ interface Props {
 }
 
 export function LicensesForm({ data, setData }: Props) {
+  const { copy } = useEditorI18n();
+  const c = copy.licenses;
   function setLic(updater: (rows: LicenseEntry[]) => LicenseEntry[]) {
     setData((prev) => ({ ...prev, licenses: updater(prev.licenses) }));
   }
   return (
-    <FormSection
-      title="Licenses & qualifications · 免許・資格"
-      description="JLPT, driving licence, certifications, etc."
-    >
+    <FormSection title={c.title} description={c.description}>
       <RowList<LicenseEntry>
         items={data.licenses}
         onAdd={() => setLic((r) => [...r, { id: newId(), year: "", month: "", name: "" }])}
@@ -35,7 +35,7 @@ export function LicensesForm({ data, setData }: Props) {
             return next;
           })
         }
-        addLabel="Add license"
+        addLabel={c.add}
         renderItem={(item, update) => (
           <div className="grid grid-cols-12 gap-2">
             <Input

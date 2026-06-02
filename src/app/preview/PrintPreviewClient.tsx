@@ -6,6 +6,7 @@ import { Sheet } from "@/components/rirekisho/Sheet";
 import { emptyResume, type Resume } from "@/lib/schema";
 import { loadResume } from "@/lib/storage";
 import { TEMPLATES, type TemplateKey, loadTemplate } from "@/lib/templates";
+import { loadSheetStyle, type SheetStyle, DEFAULT_SHEET_STYLE } from "@/lib/sheet-style";
 import "@/components/rirekisho/sheet.css";
 import "@/components/rirekisho/print.css";
 
@@ -20,10 +21,12 @@ export function PrintPreviewClient() {
   const params = useSearchParams();
   const [data, setData] = useState<Resume | null>(null);
   const [template, setTemplate] = useState<TemplateKey>("jis-a3");
+  const [style, setStyle] = useState<SheetStyle>(DEFAULT_SHEET_STYLE);
 
   useEffect(() => {
     const t = (params.get("template") as TemplateKey | null) ?? loadTemplate();
     setTemplate(t in TEMPLATES ? t : "jis-a3");
+    setStyle(loadSheetStyle());
 
     const token = params.get("token");
     const encoded = params.get("data");
@@ -84,7 +87,7 @@ export function PrintPreviewClient() {
   return (
     <>
       <style>{`@page { size: ${pageSize}; margin: 0; }`}</style>
-      <Sheet template={template} data={data} />
+      <Sheet template={template} data={data} style={style} />
     </>
   );
 }

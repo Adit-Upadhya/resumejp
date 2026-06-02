@@ -3,6 +3,7 @@
 import { Check } from "lucide-react";
 import type { TemplateKey } from "@/lib/templates";
 import { TEMPLATE_LIST } from "@/lib/templates";
+import { useEditorI18n, LANDING_COPY } from "@/lib/i18n";
 import { FormSection } from "./forms/Field";
 
 interface Props {
@@ -11,11 +12,10 @@ interface Props {
 }
 
 export function TemplatePicker({ value, onChange }: Props) {
+  const { lang, copy } = useEditorI18n();
+  const descriptions = LANDING_COPY[lang].preview.templateDescriptions;
   return (
-    <FormSection
-      title="Choose a template"
-      description="Pick the layout you want. You can change this at any time from the Template step — your form data is preserved."
-    >
+    <FormSection title={copy.template.title} description={copy.template.description}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {TEMPLATE_LIST.map((t) => {
           const active = t.key === value;
@@ -32,8 +32,10 @@ export function TemplatePicker({ value, onChange }: Props) {
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="font-medium text-sm">{t.name}</div>
-                  <div className="text-xs font-jp text-muted-foreground mt-0.5">{t.jp}</div>
+                  <div className="font-medium text-sm">{lang === "jp" ? t.jp : t.name}</div>
+                  <div className="text-xs font-jp text-muted-foreground mt-0.5">
+                    {lang === "jp" ? t.name : t.jp}
+                  </div>
                 </div>
                 {active && (
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-white">
@@ -42,7 +44,7 @@ export function TemplatePicker({ value, onChange }: Props) {
                 )}
               </div>
               <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                {t.description}
+                {descriptions[t.key]}
               </p>
               <div className="mt-3 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <span>{t.paper}</span>

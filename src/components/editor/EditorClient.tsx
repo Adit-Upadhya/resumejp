@@ -10,15 +10,33 @@ import {
   ChevronRight,
   Download,
   Edit3,
+  FileDown,
   Home,
   Loader2,
   Save,
+  Type,
   Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocalResume } from "@/lib/storage";
-import { TEMPLATES } from "@/lib/templates";
+import { TEMPLATES, type TemplateKey } from "@/lib/templates";
 import { useTemplate } from "@/lib/templates-hook";
+import {
+  useSheetStyle,
+  FONT_OPTIONS,
+  WEIGHT_OPTIONS,
+  type SheetStyle,
+} from "@/lib/sheet-style";
+import {
+  useLang,
+  EDITOR_COPY,
+  EditorI18nProvider,
+  useEditorI18n,
+  type Lang,
+} from "@/lib/i18n";
+import { LangToggle } from "@/components/LangToggle";
+import { emptyResume } from "@/lib/schema";
+import { Sheet } from "@/components/rirekisho/Sheet";
 import { PersonalForm } from "./forms/PersonalForm";
 import { EducationForm } from "./forms/EducationForm";
 import { WorkForm } from "./forms/WorkForm";
@@ -59,11 +77,14 @@ const STEPS: Step[] = [
 export function EditorClient() {
   const [data, setData, hydrated] = useLocalResume();
   const [template, setTemplate, tHydrated] = useTemplate();
+  const [style, setStyle, sHydrated] = useSheetStyle();
+  const [lang, setLang, lHydrated] = useLang();
   const [stepKey, setStepKey] = useState<StepKey>("template");
   const [busy, setBusy] = useState<null | "translate" | "pdf" | "tex">(null);
   const [downloaded, setDownloaded] = useState(false);
+  const t = EDITOR_COPY[lang];
 
-  if (!hydrated || !tHydrated) {
+  if (!hydrated || !tHydrated || !sHydrated || !lHydrated) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -87,59 +108,80 @@ export function EditorClient() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  /**
+   * Captures the given on-screen sheet element to a PDF sized to the current
+   * template. Shared by the filled-in "Download PDF" and the blank
+   * "Download template" actions.
+   */
+  async function captureSheetToPdf(el: HTMLElement, filename: string) {
+    const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+      import("html2canvas"),
+      import("jspdf"),
+    ]);
+
+    const meta = TEMPLATES[template];
+
+    const savedTransform = el.style.transform;
+    el.style.transform = "none";
+
+    let canvas: HTMLCanvasElement;
+    try {
+      canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+    } finally {
+      el.style.transform = savedTransform;
+    }
+
+    const pdf = new jsPDF({
+      orientation: meta.orientation === "landscape" ? "landscape" : "portrait",
+      unit: "mm",
+      format: meta.paper.toLowerCase() as "a3" | "a4",
+    });
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.97);
+    pdf.addImage(imgData, "JPEG", 0, 0, meta.widthMm, meta.heightMm);
+
+    const blob = pdf.output("blob");
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
   async function downloadPdf() {
     setBusy("pdf");
     try {
       const el = document.querySelector<HTMLElement>("[data-sheet-capture]");
-      if (!el) throw new Error("Sheet element not found — open the Preview step first.");
-
-      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
-        import("html2canvas"),
-        import("jspdf"),
-      ]);
-
-      const meta = TEMPLATES[template];
-
-      const savedTransform = el.style.transform;
-      el.style.transform = "none";
-
-      let canvas: HTMLCanvasElement;
-      try {
-        canvas = await html2canvas(el, {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-          backgroundColor: "#ffffff",
-        });
-      } finally {
-        el.style.transform = savedTransform;
-      }
-
-      const pdf = new jsPDF({
-        orientation: meta.orientation === "landscape" ? "landscape" : "portrait",
-        unit: "mm",
-        format: meta.paper.toLowerCase() as "a3" | "a4",
-      });
-
-      const imgData = canvas.toDataURL("image/jpeg", 0.97);
-      pdf.addImage(imgData, "JPEG", 0, 0, meta.widthMm, meta.heightMm);
-
-      const blob = pdf.output("blob");
-      const filename = "rirekisho.pdf";
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-
+      if (!el) throw new Error(t.toasts.sheetNotFound);
+      await captureSheetToPdf(el, "rirekisho.pdf");
       setDownloaded(true);
-      toast.success("PDF downloaded");
+      toast.success(t.toasts.pdfDownloaded);
     } catch (e) {
       console.error(e);
-      toast.error(e instanceof Error ? e.message : "Failed to generate PDF");
+      toast.error(e instanceof Error ? e.message : t.toasts.pdfFailed);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function downloadTemplate() {
+    setBusy("pdf");
+    try {
+      const el = document.querySelector<HTMLElement>("[data-sheet-template-capture]");
+      if (!el) throw new Error(t.toasts.sheetNotFound);
+      await captureSheetToPdf(el, "rirekisho-blank-template.pdf");
+      toast.success(t.toasts.templateDownloaded);
+    } catch (e) {
+      console.error(e);
+      toast.error(e instanceof Error ? e.message : t.toasts.templateFailed);
     } finally {
       setBusy(null);
     }
@@ -155,9 +197,9 @@ export function EditorClient() {
       try {
         const json = JSON.parse(await file.text());
         setData(json);
-        toast.success("Imported");
+        toast.success(t.toasts.imported);
       } catch {
-        toast.error("Invalid JSON file");
+        toast.error(t.toasts.invalidJson);
       }
     };
     input.click();
@@ -168,12 +210,10 @@ export function EditorClient() {
     try {
       const translated = await translateResume(data);
       setData(translated);
-      toast.success("Translated to Japanese");
+      toast.success(t.toasts.translated);
     } catch (e) {
       console.error(e);
-      toast.error(
-        e instanceof Error ? e.message : "Translation failed — check ANTHROPIC_API_KEY",
-      );
+      toast.error(e instanceof Error ? e.message : t.toasts.translateFailed);
     } finally {
       setBusy(null);
     }
@@ -181,10 +221,11 @@ export function EditorClient() {
 
   function loadSample() {
     setData(sampleResume());
-    toast.success("Sample data loaded");
+    toast.success(t.toasts.sampleLoaded);
   }
 
   return (
+    <EditorI18nProvider value={{ lang, copy: t }}>
     <div className="min-h-screen flex flex-col bg-zinc-50">
       <AnimatePresence>{busy === "pdf" && <PdfLoadingOverlay />}</AnimatePresence>
       <Header
@@ -192,6 +233,8 @@ export function EditorClient() {
         onSample={loadSample}
         onTranslate={translateAll}
         busy={busy}
+        lang={lang}
+        onLangChange={setLang}
       />
 
       <Stepper currentIndex={stepIndex} onJump={jumpTo} />
@@ -201,9 +244,12 @@ export function EditorClient() {
           <PreviewStep
             data={data}
             template={template}
+            style={style}
+            onStyleChange={setStyle}
             onBack={() => jumpTo("extras")}
             onEdit={() => jumpTo("personal")}
             onDownloadPdf={downloadPdf}
+            onDownloadTemplate={downloadTemplate}
             busy={busy}
             downloaded={downloaded}
             onResetDownload={() => setDownloaded(false)}
@@ -237,15 +283,15 @@ export function EditorClient() {
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back
+                {t.nav.back}
               </Button>
 
               <div className="text-xs text-muted-foreground">
-                Step {stepIndex + 1} of {STEPS.length}
+                {t.nav.stepOf(stepIndex + 1, STEPS.length)}
               </div>
 
               <Button onClick={() => go(1)} disabled={isLast} className="gap-2">
-                {stepIndex === STEPS.length - 2 ? "Review" : "Next"}
+                {stepIndex === STEPS.length - 2 ? t.nav.review : t.nav.next}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -253,6 +299,7 @@ export function EditorClient() {
         )}
       </main>
     </div>
+    </EditorI18nProvider>
   );
 }
 
@@ -261,12 +308,17 @@ function Header({
   onSample,
   onTranslate,
   busy,
+  lang,
+  onLangChange,
 }: {
   onImport: () => void;
   onSample: () => void;
   onTranslate: () => void;
   busy: null | "translate" | "pdf" | "tex";
+  lang: Lang;
+  onLangChange: (l: Lang) => void;
 }) {
+  const { copy } = useEditorI18n();
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white px-4 lg:px-6">
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -275,23 +327,24 @@ function Header({
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground shrink-0"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span className="hidden xs:inline">Home</span>
+          <span className="hidden xs:inline">{copy.header.home}</span>
         </Link>
         <span className="text-muted-foreground hidden sm:inline">·</span>
         <span className="font-medium tracking-tight text-sm hidden sm:inline truncate">
           <span className="font-jp mr-1.5">履歴書</span>Builder
         </span>
         <span className="ml-1 hidden lg:inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-          <Save className="h-3 w-3" /> Autosaved
+          <Save className="h-3 w-3" /> {copy.header.autosaved}
         </span>
       </div>
       <div className="flex items-center gap-1.5 sm:gap-2">
+        <LangToggle lang={lang} onChange={onLangChange} />
         <Button size="sm" variant="ghost" onClick={onSample} className="hidden sm:flex">
-          Load sample
+          {copy.header.loadSample}
         </Button>
         <Button size="sm" variant="outline" onClick={onImport} className="hidden sm:flex">
           <Upload className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Import</span>
+          <span className="hidden md:inline">{copy.header.import}</span>
         </Button>
         <Button
           size="sm"
@@ -304,7 +357,7 @@ function Header({
           ) : (
             <span className="font-jp text-[11px]">あ→日</span>
           )}
-          <span className="hidden sm:inline">Translate</span>
+          <span className="hidden sm:inline">{copy.header.translate}</span>
         </Button>
       </div>
     </header>
@@ -318,6 +371,7 @@ function Stepper({
   currentIndex: number;
   onJump: (key: StepKey) => void;
 }) {
+  const { lang } = useEditorI18n();
   const prevStep = currentIndex > 0 ? STEPS[currentIndex - 1] : null;
   const nextStep = currentIndex < STEPS.length - 1 ? STEPS[currentIndex + 1] : null;
   const progress = ((currentIndex + 1) / STEPS.length) * 100;
@@ -373,14 +427,20 @@ function Stepper({
                     >
                       {isDone ? <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={3} /> : i + 1}
                     </span>
-                    <span className="font-medium whitespace-nowrap">{s.label}</span>
                     <span
-                      className={`font-jp text-[10px] hidden xl:inline ${
-                        isActive ? "opacity-80" : "opacity-60"
-                      }`}
+                      className={`font-medium whitespace-nowrap ${lang === "jp" ? "font-jp" : ""}`}
                     >
-                      {s.jp}
+                      {lang === "jp" ? s.jp : s.label}
                     </span>
+                    {lang === "en" && (
+                      <span
+                        className={`font-jp text-[10px] hidden xl:inline ${
+                          isActive ? "opacity-80" : "opacity-60"
+                        }`}
+                      >
+                        {s.jp}
+                      </span>
+                    )}
                   </button>
                   {i < STEPS.length - 1 && (
                     <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-zinc-300 mx-0 sm:mx-0.5 flex-shrink-0" />
@@ -408,42 +468,62 @@ function Stepper({
 function PreviewStep({
   data,
   template,
+  style,
+  onStyleChange,
   onBack,
   onEdit,
   onDownloadPdf,
+  onDownloadTemplate,
   busy,
   downloaded,
   onResetDownload,
 }: {
   data: import("@/lib/schema").Resume;
-  template: import("@/lib/templates").TemplateKey;
+  template: TemplateKey;
+  style: SheetStyle;
+  onStyleChange: (s: SheetStyle) => void;
   onBack: () => void;
   onEdit: () => void;
   onDownloadPdf: () => void;
+  onDownloadTemplate: () => void;
   busy: null | "translate" | "pdf" | "tex";
   downloaded: boolean;
   onResetDownload: () => void;
 }) {
   const meta = TEMPLATES[template];
+  const { lang, copy } = useEditorI18n();
+  const c = copy.preview;
   return (
     <div className="flex flex-col">
       {/* Top bar */}
       <div className="border-b bg-white px-4 lg:px-8 py-4">
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-base sm:text-lg font-semibold">Review your resume</h1>
+            <h1 className="text-base sm:text-lg font-semibold">{c.title}</h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              <span className="font-medium">{meta.name}</span>
-              <span className="font-jp ml-1">({meta.jp})</span> · {meta.paper}{" "}
+              <span className="font-medium">{lang === "jp" ? meta.jp : meta.name}</span>
+              {lang === "en" && <span className="font-jp ml-1">({meta.jp})</span>} · {meta.paper}{" "}
               {meta.orientation}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={onBack} className="gap-1.5">
-              <ArrowLeft className="h-3.5 w-3.5" /> Back
+              <ArrowLeft className="h-3.5 w-3.5" /> {c.back}
             </Button>
             <Button variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
-              <Edit3 className="h-3.5 w-3.5" /> Edit
+              <Edit3 className="h-3.5 w-3.5" /> {c.edit}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDownloadTemplate}
+              disabled={busy === "pdf"}
+              className="gap-1.5"
+              title={c.downloadTemplateTitle}
+            >
+              <FileDown className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{c.downloadTemplate}</span>
+              <span className="sm:hidden">{copy.template.title}</span>
             </Button>
             <Button
               size="sm"
@@ -456,16 +536,35 @@ function PreviewStep({
               ) : (
                 <Download className="h-3.5 w-3.5" />
               )}
-              Download PDF
+              {c.downloadPdf}
             </Button>
           </div>
         </div>
       </div>
 
+      {/* Typography controls */}
+      <StyleControls style={style} onChange={onStyleChange} />
+
       {/* Preview area */}
       <div className="flex-1 bg-zinc-200 py-6 px-3 sm:py-8 sm:px-4 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <Preview data={data} template={template} />
+          <Preview data={data} template={template} style={style} />
+        </div>
+      </div>
+
+      {/* Off-screen blank sheet captured by "Download template". Rendered at
+          full natural size so the PDF matches the real form dimensions. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-10000px",
+          top: 0,
+          pointerEvents: "none",
+        }}
+      >
+        <div data-sheet-template-capture>
+          <Sheet template={template} data={emptyResume()} style={style} />
         </div>
       </div>
 
@@ -484,7 +583,7 @@ function PreviewStep({
               >
                 <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium">
                   <Check className="h-4 w-4" strokeWidth={3} />
-                  PDF downloaded successfully
+                  {c.downloadedOk}
                 </div>
                 <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
                   <Button
@@ -498,12 +597,12 @@ function PreviewStep({
                     ) : (
                       <Download className="h-4 w-4" />
                     )}
-                    Download again
+                    {c.downloadAgain}
                   </Button>
                   <Button asChild className="gap-2 flex-1 sm:flex-none">
                     <Link href="/">
                       <Home className="h-4 w-4" />
-                      Return to Home
+                      {c.returnHome}
                     </Link>
                   </Button>
                 </div>
@@ -519,8 +618,8 @@ function PreviewStep({
               >
                 <Button variant="outline" onClick={onBack} className="gap-2">
                   <ArrowLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline">Back to editing</span>
-                  <span className="sm:hidden">Back</span>
+                  <span className="hidden sm:inline">{c.backToEditing}</span>
+                  <span className="sm:hidden">{c.back}</span>
                 </Button>
                 <Button
                   onClick={onDownloadPdf}
@@ -532,7 +631,7 @@ function PreviewStep({
                   ) : (
                     <Download className="h-4 w-4" />
                   )}
-                  Download PDF
+                  {c.downloadPdf}
                 </Button>
               </motion.div>
             )}
@@ -543,15 +642,86 @@ function PreviewStep({
   );
 }
 
-function saveBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+/**
+ * Compact toolbar letting the user pick the sheet font (5 common Japanese
+ * typefaces) and one of 3 boldness levels. Changes apply live to the preview
+ * and therefore to the downloaded PDF.
+ */
+function StyleControls({
+  style,
+  onChange,
+}: {
+  style: SheetStyle;
+  onChange: (s: SheetStyle) => void;
+}) {
+  const { copy } = useEditorI18n();
+  const c = copy.preview;
+  const weightName: Record<string, string> = {
+    light: c.weightLight,
+    normal: c.weightMedium,
+    bold: c.weightBold,
+  };
+  return (
+    <div className="border-b bg-white px-4 lg:px-8 py-3">
+      <div className="mx-auto max-w-6xl flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-500">
+          <Type className="h-3.5 w-3.5" />
+          <span>{c.typography}</span>
+        </div>
+
+        {/* Font picker */}
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xs text-zinc-500 shrink-0">{c.font}</span>
+          <div className="flex flex-wrap gap-1.5">
+            {FONT_OPTIONS.map((f) => {
+              const active = style.font === f.key;
+              return (
+                <button
+                  key={f.key}
+                  onClick={() => onChange({ ...style, font: f.key })}
+                  title={`${f.name} · ${f.jp}`}
+                  className={`rounded-md border px-2.5 py-1 text-xs transition-colors ${
+                    active
+                      ? "border-zinc-900 bg-zinc-900 text-white"
+                      : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+                  }`}
+                >
+                  <span className="font-jp" style={{ fontFamily: f.stack }}>
+                    {f.jp}
+                  </span>
+                  <span className="ml-1.5 hidden md:inline opacity-70">{f.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Boldness picker */}
+        <div className="flex items-center gap-2 sm:ml-auto">
+          <span className="text-xs text-zinc-500 shrink-0">{c.boldness}</span>
+          <div className="flex gap-1.5">
+            {WEIGHT_OPTIONS.map((w) => {
+              const active = style.weight === w.key;
+              return (
+                <button
+                  key={w.key}
+                  onClick={() => onChange({ ...style, weight: w.key })}
+                  className={`rounded-md border px-2.5 py-1 text-xs transition-colors ${
+                    active
+                      ? "border-zinc-900 bg-zinc-900 text-white"
+                      : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+                  }`}
+                  style={{ fontWeight: w.weight }}
+                >
+                  {weightName[w.key] ?? w.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 const PDF_MESSAGES = [

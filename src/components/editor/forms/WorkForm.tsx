@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import type { HistoryEntry, Resume } from "@/lib/schema";
 import { newId } from "@/lib/schema";
+import { useEditorI18n } from "@/lib/i18n";
 import { FormSection } from "./Field";
 import { RowList } from "./RowList";
 
@@ -12,15 +13,14 @@ interface Props {
 }
 
 export function WorkForm({ data, setData }: Props) {
+  const { copy } = useEditorI18n();
+  const c = copy.work;
   function setWork(updater: (rows: HistoryEntry[]) => HistoryEntry[]) {
     setData((prev) => ({ ...prev, work: updater(prev.work) }));
   }
 
   return (
-    <FormSection
-      title="Work history · 職歴"
-      description="Each row is one line in the 職歴 table. Use entries like '株式会社○○ 入社' and '一身上の都合により退社'. End with '現在に至る'."
-    >
+    <FormSection title={c.title} description={c.description}>
       <RowList<HistoryEntry>
         items={data.work}
         onAdd={() => setWork((r) => [...r, { id: newId(), year: "", month: "", content: "" }])}
@@ -36,7 +36,7 @@ export function WorkForm({ data, setData }: Props) {
             return next;
           })
         }
-        addLabel="Add work row"
+        addLabel={c.add}
         renderItem={(item, update) => (
           <div className="grid grid-cols-12 gap-2">
             <Input

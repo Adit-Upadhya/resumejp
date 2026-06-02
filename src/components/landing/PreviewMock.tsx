@@ -9,6 +9,7 @@ import { Sheet } from "@/components/rirekisho/Sheet";
 import { sampleResume } from "@/lib/sample";
 import { TEMPLATE_LIST, type TemplateKey } from "@/lib/templates";
 import { Button } from "@/components/ui/button";
+import type { Lang, LandingCopy } from "@/lib/i18n";
 
 const PX_PER_MM = 96 / 25.4;
 const MAX_PREVIEW_W = 980;
@@ -18,10 +19,19 @@ const MAX_PREVIEW_W = 980;
  * preview swaps below. One stage at a time, no overlap. Each card
  * deep-links into the editor with that template pre-selected.
  */
-export function PreviewMock() {
+export function PreviewMock({
+  lang,
+  copy,
+}: {
+  lang: Lang;
+  copy: LandingCopy["preview"];
+}) {
   const [active, setActive] = useState<TemplateKey>("jis-a3");
   const sample = sampleResume();
   const meta = TEMPLATE_LIST.find((t) => t.key === active)!;
+  // In Japanese mode show the template's Japanese name as the primary label.
+  const activeName = lang === "jp" ? meta.jp : meta.name;
+  const activeDescription = copy.templateDescriptions[active];
   const sheetW = meta.widthMm * PX_PER_MM;
   const sheetH = meta.heightMm * PX_PER_MM;
 
@@ -46,12 +56,8 @@ export function PreviewMock() {
       className="rounded-3xl border bg-gradient-to-b from-zinc-50 to-white p-6 sm:p-10 shadow-sm"
     >
       <div className="mx-auto max-w-3xl text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-          Four templates. Same data.
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          Switch layouts any time without retyping a thing.
-        </p>
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">{copy.heading}</h2>
+        <p className="mt-2 text-muted-foreground">{copy.sub}</p>
       </div>
 
       {/* Tab row */}
@@ -68,7 +74,7 @@ export function PreviewMock() {
                   : "bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50"
               }`}
             >
-              <span className="font-medium">{t.name}</span>
+              <span className="font-medium">{lang === "jp" ? t.jp : t.name}</span>
               <span
                 className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded ${
                   isActive ? "bg-white/20" : "bg-zinc-100"
@@ -118,14 +124,15 @@ export function PreviewMock() {
 
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
           <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-zinc-900">{meta.name}</span>
-            <span className="font-jp ml-1 text-xs">({meta.jp})</span> — {meta.description}
+            <span className="font-medium text-zinc-900">{activeName}</span>
+            {lang === "en" && <span className="font-jp ml-1 text-xs">({meta.jp})</span>} —{" "}
+            {activeDescription}
           </p>
         </div>
         <div className="mt-4 text-center">
           <Button asChild size="lg">
             <Link href="/editor">
-              Use {meta.name}
+              {copy.use(activeName)}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>

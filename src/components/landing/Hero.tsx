@@ -4,8 +4,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { LandingCopy } from "@/lib/i18n";
 
-export function Hero() {
+export function Hero({ copy }: { copy: LandingCopy["hero"] }) {
   return (
     <section className="relative pt-28 pb-16 sm:pt-36 sm:pb-24 overflow-hidden">
       <div className="absolute inset-0 bg-grid pointer-events-none" />
@@ -18,36 +19,33 @@ export function Hero() {
         >
           <div className="inline-flex items-center gap-1.5 rounded-full border bg-white/60 px-3 py-1 text-xs text-muted-foreground shadow-sm">
             <Sparkles className="h-3 w-3" />
-            <span>English / 日本語 / नेपाली → Professional 日本語</span>
+            <span>{copy.badge}</span>
           </div>
 
           <h1 className="mt-6 text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05]">
-            The Japanese resume,
+            {copy.titleLine1}
             <br />
             <span className="bg-gradient-to-br from-zinc-900 to-zinc-500 bg-clip-text text-transparent">
-              written for you.
+              {copy.titleLine2}
             </span>
           </h1>
 
           <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-            Build a JIS-style 履歴書 that matches the format Japanese employers actually expect.
-            Fill it out in any language, get a polished PDF in Japanese.
+            {copy.subtitle}
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-3">
             <Button asChild size="lg">
               <Link href="/editor">
-                Start your rirekisho <ArrowRight className="h-4 w-4" />
+                {copy.ctaPrimary} <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="#preview">See the preview</a>
+              <a href="#preview">{copy.ctaSecondary}</a>
             </Button>
           </div>
 
-          <p className="mt-4 text-xs text-muted-foreground">
-            Free · No signup · Your data stays in your browser
-          </p>
+          <p className="mt-4 text-xs text-muted-foreground">{copy.fineprint}</p>
         </motion.div>
       </div>
     </section>

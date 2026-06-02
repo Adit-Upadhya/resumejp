@@ -1,0 +1,542 @@
+"use client";
+
+import { createContext, useContext, useEffect, useState } from "react";
+import type { TemplateKey } from "./templates";
+
+/**
+ * Lightweight i18n for the marketing/landing page. The toggle in the nav
+ * flips between English and Japanese; the choice is persisted to localStorage
+ * so it sticks across reloads.
+ */
+
+export type Lang = "en" | "jp";
+
+export interface LandingCopy {
+  nav: { editor: string; getStarted: string };
+  hero: {
+    badge: string;
+    titleLine1: string;
+    titleLine2: string;
+    subtitle: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+    fineprint: string;
+  };
+  features: {
+    heading: string;
+    sub: string;
+    items: { title: string; description: string }[];
+  };
+  preview: {
+    heading: string;
+    sub: string;
+    use: (name: string) => string;
+    templateDescriptions: Record<TemplateKey, string>;
+  };
+  cta: { heading: string; sub: string; button: string };
+}
+
+export const LANDING_COPY: Record<Lang, LandingCopy> = {
+  en: {
+    nav: { editor: "Editor", getStarted: "Get started" },
+    hero: {
+      badge: "English / 日本語 / नेपाली → Professional 日本語",
+      titleLine1: "The Japanese resume,",
+      titleLine2: "written for you.",
+      subtitle:
+        "Build a JIS-style 履歴書 that matches the format Japanese employers actually expect. Fill it out in any language, get a polished PDF in Japanese.",
+      ctaPrimary: "Start your rirekisho",
+      ctaSecondary: "See the preview",
+      fineprint: "Free · No signup · Your data stays in your browser",
+    },
+    features: {
+      heading: "Everything you need to apply in Japan",
+      sub: "A traditional 履歴書, generated from a modern editor — no Japanese typewriter required.",
+      items: [
+        {
+          title: "Authentic JIS-style format",
+          description:
+            "Pixel-faithful recreation of the standard rirekisho template. Two A4 pages, the exact table grid that Japanese HR expects.",
+        },
+        {
+          title: "Type in any language",
+          description:
+            "Write in English, Nepali, or Japanese. Each section is rewritten into natural business Japanese before it lands on the page.",
+        },
+        {
+          title: "Live preview",
+          description:
+            "See the resume update as you type. Adjust margins, swap a photo, change history rows — the sheet reflows in real time.",
+        },
+        {
+          title: "Three export formats",
+          description:
+            "High-resolution PDF, XeLaTeX .tex source, or JSON backup you can re-import later. Take your data with you.",
+        },
+        {
+          title: "No account, no tracking",
+          description:
+            "Everything lives in your browser. Nothing is stored on a server — leave the page and it's gone.",
+        },
+        {
+          title: "Ready for Japan job market",
+          description:
+            "Fields, ふりがな lines, photo box, 配偶者 / 扶養家族 / 本人希望記入欄 — all positioned where employers expect them.",
+        },
+      ],
+    },
+    preview: {
+      heading: "Four templates. Same data.",
+      sub: "Switch layouts any time without retyping a thing.",
+      use: (name) => `Use ${name}`,
+      templateDescriptions: {
+        "jis-a3":
+          "Traditional 観音開き layout printed on A3 landscape — what most Japanese companies expect.",
+        "jis-a4": "Same JIS fields condensed onto a single A4 portrait page.",
+        "mhlw-a4":
+          "2021 government-recommended layout — no gender, spouse, or commute fields. Modern and inclusive.",
+        "modern-a4": "Minimal single-column A4 design for tech/startup applications.",
+      },
+    },
+    cta: {
+      heading: "Build your rirekisho in minutes",
+      sub: "Free, no signup, no email. Open the editor, fill in what you have, download the PDF.",
+      button: "Open the editor",
+    },
+  },
+  jp: {
+    nav: { editor: "エディター", getStarted: "始める" },
+    hero: {
+      badge: "英語・日本語・ネパール語 → きれいな日本語",
+      titleLine1: "あなたの履歴書を、",
+      titleLine2: "プロ品質で。",
+      subtitle:
+        "日本の企業が実際に求めるJIS規格の履歴書を作成。どの言語で入力しても、整った日本語のPDFが手に入ります。",
+      ctaPrimary: "履歴書を作成する",
+      ctaSecondary: "プレビューを見る",
+      fineprint: "無料 · 登録不要 · データはブラウザ内に保存",
+    },
+    features: {
+      heading: "日本での就職に必要なすべて",
+      sub: "モダンなエディターから、伝統的な履歴書を生成。日本語の入力環境は必要ありません。",
+      items: [
+        {
+          title: "本格的なJIS規格フォーマット",
+          description:
+            "標準的な履歴書テンプレートを忠実に再現。日本の人事が求める正確な表組みを、そのまま再現します。",
+        },
+        {
+          title: "どの言語でも入力可能",
+          description:
+            "英語・ネパール語・日本語で入力。各項目は、ページに反映される前に自然なビジネス日本語へ書き換えられます。",
+        },
+        {
+          title: "リアルタイムプレビュー",
+          description:
+            "入力に合わせて履歴書が更新。余白の調整、写真の差し替え、行の追加も、その場で反映されます。",
+        },
+        {
+          title: "3つの出力形式",
+          description:
+            "高解像度PDF、XeLaTeXの.texソース、後で再読み込みできるJSONバックアップ。データはいつでも持ち出せます。",
+        },
+        {
+          title: "アカウント不要・追跡なし",
+          description:
+            "すべてブラウザ内で完結。サーバーには何も保存されず、ページを閉じればデータは消えます。",
+        },
+        {
+          title: "日本の就職市場に最適化",
+          description:
+            "ふりがな欄、写真貼付欄、配偶者・扶養家族・本人希望記入欄まで、採用担当者が求める位置に配置。",
+        },
+      ],
+    },
+    preview: {
+      heading: "4つのテンプレート、同じデータ。",
+      sub: "入力し直すことなく、いつでもレイアウトを切り替えられます。",
+      use: (name) => `${name} を使う`,
+      templateDescriptions: {
+        "jis-a3": "観音開きのA3横レイアウト。日本企業で最も一般的な形式です。",
+        "jis-a4": "同じJIS項目をA4縦1枚にまとめた形式です。",
+        "mhlw-a4":
+          "2021年の厚生労働省推奨様式。性別・配偶者・通勤の欄がなく、現代的で包括的です。",
+        "modern-a4": "IT・スタートアップ向けの、ミニマルな1カラムA4デザインです。",
+      },
+    },
+    cta: {
+      heading: "数分で履歴書が完成",
+      sub: "無料・登録不要・メール不要。エディターを開いて、手元の情報を入力し、PDFをダウンロード。",
+      button: "エディターを開く",
+    },
+  },
+};
+
+const STORAGE_KEY = "rirekisho-lang-v1";
+
+export function loadLang(): Lang {
+  if (typeof window === "undefined") return "en";
+  const v = localStorage.getItem(STORAGE_KEY);
+  return v === "jp" ? "jp" : "en";
+}
+
+export function saveLang(lang: Lang): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, lang);
+  } catch {
+    // ignore
+  }
+}
+
+export function useLang(): [Lang, (l: Lang) => void, boolean] {
+  const [lang, setLang] = useState<Lang>("en");
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setLang(loadLang());
+    setHydrated(true);
+  }, []);
+  function update(l: Lang) {
+    setLang(l);
+    saveLang(l);
+  }
+  return [lang, update, hydrated];
+}
+
+/* ============================================================
+   Editor i18n
+   ============================================================ */
+
+export interface EditorCopy {
+  header: {
+    home: string;
+    autosaved: string;
+    loadSample: string;
+    import: string;
+    translate: string;
+  };
+  nav: { back: string; next: string; review: string; stepOf: (i: number, n: number) => string };
+  template: { title: string; description: string };
+  personal: {
+    section: string;
+    sectionDesc: string;
+    fullName: string;
+    furigana: string;
+    dob: string;
+    gender: string;
+    male: string;
+    female: string;
+    select: string;
+    nationality: string;
+    photo: string;
+    photoHint: string;
+    uploadPhoto: string;
+    remove: string;
+    addressSection: string;
+    postalCode: string;
+    address: string;
+    phone: string;
+    email: string;
+    contactSection: string;
+    contactDesc: string;
+    sameAsAbove: string;
+  };
+  education: { title: string; description: string; add: string; empty: string };
+  work: { title: string; description: string; add: string };
+  licenses: { title: string; description: string; add: string };
+  extras: {
+    selfPrSection: string;
+    selfPrDesc: string;
+    selfPrLabel: string;
+    commuteSection: string;
+    commuteTime: string;
+    dependents: string;
+    spouse: string;
+    spouseSupport: string;
+    yes: string;
+    no: string;
+    select: string;
+    prefSection: string;
+    prefDesc: string;
+    prefLabel: string;
+  };
+  preview: {
+    title: string;
+    back: string;
+    edit: string;
+    downloadTemplate: string;
+    downloadTemplateTitle: string;
+    downloadPdf: string;
+    backToEditing: string;
+    downloadedOk: string;
+    downloadAgain: string;
+    returnHome: string;
+    typography: string;
+    font: string;
+    boldness: string;
+    weightLight: string;
+    weightMedium: string;
+    weightBold: string;
+  };
+  toasts: {
+    imported: string;
+    invalidJson: string;
+    translated: string;
+    translateFailed: string;
+    sampleLoaded: string;
+    pdfDownloaded: string;
+    pdfFailed: string;
+    templateDownloaded: string;
+    templateFailed: string;
+    sheetNotFound: string;
+    photoNotImage: string;
+    photoTooLarge: string;
+    photoReadFailed: string;
+  };
+}
+
+export const EDITOR_COPY: Record<Lang, EditorCopy> = {
+  en: {
+    header: {
+      home: "Home",
+      autosaved: "Autosaved",
+      loadSample: "Load sample",
+      import: "Import",
+      translate: "Translate",
+    },
+    nav: {
+      back: "Back",
+      next: "Next",
+      review: "Review",
+      stepOf: (i, n) => `Step ${i} of ${n}`,
+    },
+    template: {
+      title: "Choose a template",
+      description:
+        "Pick the layout you want. You can change this at any time from the Template step — your form data is preserved.",
+    },
+    personal: {
+      section: "Personal information",
+      sectionDesc:
+        "Top block of the rirekisho. You can write in any language — the Translate button will convert everything to Japanese for the final PDF.",
+      fullName: "Full name (氏名)",
+      furigana: "Furigana (ふりがな)",
+      dob: "Date of birth (生年月日)",
+      gender: "Gender (性別)",
+      male: "男 / Male",
+      female: "女 / Female",
+      select: "Select",
+      nationality: "Nationality (国籍)",
+      photo: "Photo (写真)",
+      photoHint: "JPEG/PNG · max 8 MB · auto-resized to fit the photo cell",
+      uploadPhoto: "Upload photo",
+      remove: "Remove",
+      addressSection: "Current address (現住所)",
+      postalCode: "Postal code (〒)",
+      address: "Address",
+      phone: "Phone (電話)",
+      email: "Email (メールアドレス)",
+      contactSection: "Alternate contact (連絡先)",
+      contactDesc:
+        "Only fill this if you want post/calls sent somewhere other than your current address.",
+      sameAsAbove: "Same as current address (renders 同上)",
+    },
+    education: {
+      title: "Education · 学歴",
+      description:
+        "Add one row per milestone. Enter dates and a single line of free text. Order matches the rendered table (oldest at top).",
+      add: "Add education row",
+      empty: "No education yet — add your first school.",
+    },
+    work: {
+      title: "Work history · 職歴",
+      description:
+        "Each row is one line in the 職歴 table. Use entries like '株式会社○○ 入社' and '一身上の都合により退社'. End with '現在に至る'.",
+      add: "Add work row",
+    },
+    licenses: {
+      title: "Licenses & qualifications · 免許・資格",
+      description: "JLPT, driving licence, certifications, etc.",
+      add: "Add license",
+    },
+    extras: {
+      selfPrSection: "Self PR · 特技・自己PR",
+      selfPrDesc:
+        "Strengths, motivation, why you want to join. 3–4 sentences in business Japanese.",
+      selfPrLabel: "特技、自己PRなど",
+      commuteSection: "Commute & family",
+      commuteTime: "Commute time (通勤時間)",
+      dependents: "Dependents excl. spouse (扶養家族)",
+      spouse: "Spouse (配偶者)",
+      spouseSupport: "Spouse support obligation (配偶者の扶養義務)",
+      yes: "有 / Yes",
+      no: "無 / No",
+      select: "Select",
+      prefSection: "Personal preference · 本人希望記入欄",
+      prefDesc: "Salary, location, hours, etc. Many candidates simply write 「貴社の規定に従います。」",
+      prefLabel: "本人希望記入欄",
+    },
+    preview: {
+      title: "Review your resume",
+      back: "Back",
+      edit: "Edit",
+      downloadTemplate: "Download template",
+      downloadTemplateTitle: "Download a blank copy of this form (no data filled in)",
+      downloadPdf: "Download PDF",
+      backToEditing: "Back to editing",
+      downloadedOk: "PDF downloaded successfully",
+      downloadAgain: "Download again",
+      returnHome: "Return to Home",
+      typography: "Typography",
+      font: "Font",
+      boldness: "Boldness",
+      weightLight: "Light",
+      weightMedium: "Medium",
+      weightBold: "Bold",
+    },
+    toasts: {
+      imported: "Imported",
+      invalidJson: "Invalid JSON file",
+      translated: "Translated to Japanese",
+      translateFailed: "Translation failed — check ANTHROPIC_API_KEY",
+      sampleLoaded: "Sample data loaded",
+      pdfDownloaded: "PDF downloaded",
+      pdfFailed: "Failed to generate PDF",
+      templateDownloaded: "Blank template downloaded",
+      templateFailed: "Failed to generate template",
+      sheetNotFound: "Sheet element not found — open the Preview step first.",
+      photoNotImage: "Please choose an image file (JPEG or PNG).",
+      photoTooLarge: "Photo is too large — please use an image under 8 MB.",
+      photoReadFailed: "Could not read that image — try a different file.",
+    },
+  },
+  jp: {
+    header: {
+      home: "ホーム",
+      autosaved: "自動保存",
+      loadSample: "サンプルを読み込む",
+      import: "インポート",
+      translate: "翻訳",
+    },
+    nav: {
+      back: "戻る",
+      next: "次へ",
+      review: "確認",
+      stepOf: (i, n) => `ステップ ${i} / ${n}`,
+    },
+    template: {
+      title: "テンプレートを選択",
+      description:
+        "希望のレイアウトを選んでください。テンプレートのステップからいつでも変更でき、入力済みのデータは保持されます。",
+    },
+    personal: {
+      section: "基本情報",
+      sectionDesc:
+        "履歴書の上部です。どの言語でも入力できます。「翻訳」ボタンで、最終PDF用にすべて日本語へ変換されます。",
+      fullName: "氏名",
+      furigana: "ふりがな",
+      dob: "生年月日",
+      gender: "性別",
+      male: "男性",
+      female: "女性",
+      select: "選択",
+      nationality: "国籍",
+      photo: "写真",
+      photoHint: "JPEG/PNG · 最大8MB · 写真欄に合わせて自動リサイズ",
+      uploadPhoto: "写真をアップロード",
+      remove: "削除",
+      addressSection: "現住所",
+      postalCode: "郵便番号（〒）",
+      address: "住所",
+      phone: "電話",
+      email: "メールアドレス",
+      contactSection: "連絡先",
+      contactDesc: "現住所以外に郵便・連絡を希望する場合のみ入力してください。",
+      sameAsAbove: "現住所と同じ（「同上」と表示）",
+    },
+    education: {
+      title: "学歴",
+      description:
+        "節目ごとに1行ずつ追加します。年月と1行の自由記述を入力してください。並び順は表示される表と同じです（古い順に上から）。",
+      add: "学歴を追加",
+      empty: "学歴がまだありません。最初の学校を追加してください。",
+    },
+    work: {
+      title: "職歴",
+      description:
+        "各行が職歴表の1行になります。「株式会社○○ 入社」「一身上の都合により退社」などを使い、最後は「現在に至る」で締めます。",
+      add: "職歴を追加",
+    },
+    licenses: {
+      title: "免許・資格",
+      description: "日本語能力試験、運転免許、各種資格など。",
+      add: "資格を追加",
+    },
+    extras: {
+      selfPrSection: "特技・自己PR",
+      selfPrDesc: "強み、志望動機、入社したい理由など。ビジネス日本語で3〜4文程度。",
+      selfPrLabel: "特技、自己PRなど",
+      commuteSection: "通勤・家族",
+      commuteTime: "通勤時間",
+      dependents: "扶養家族（配偶者を除く）",
+      spouse: "配偶者",
+      spouseSupport: "配偶者の扶養義務",
+      yes: "有",
+      no: "無",
+      select: "選択",
+      prefSection: "本人希望記入欄",
+      prefDesc: "給料・勤務地・勤務時間など。「貴社の規定に従います。」と書く方も多くいます。",
+      prefLabel: "本人希望記入欄",
+    },
+    preview: {
+      title: "履歴書を確認",
+      back: "戻る",
+      edit: "編集",
+      downloadTemplate: "テンプレートをダウンロード",
+      downloadTemplateTitle: "この様式の空欄コピーをダウンロード（データなし）",
+      downloadPdf: "PDFをダウンロード",
+      backToEditing: "編集に戻る",
+      downloadedOk: "PDFをダウンロードしました",
+      downloadAgain: "もう一度ダウンロード",
+      returnHome: "ホームに戻る",
+      typography: "書体",
+      font: "フォント",
+      boldness: "太さ",
+      weightLight: "細字",
+      weightMedium: "標準",
+      weightBold: "太字",
+    },
+    toasts: {
+      imported: "インポートしました",
+      invalidJson: "JSONファイルが正しくありません",
+      translated: "日本語に翻訳しました",
+      translateFailed: "翻訳に失敗しました — ANTHROPIC_API_KEY を確認してください",
+      sampleLoaded: "サンプルデータを読み込みました",
+      pdfDownloaded: "PDFをダウンロードしました",
+      pdfFailed: "PDFの生成に失敗しました",
+      templateDownloaded: "空欄テンプレートをダウンロードしました",
+      templateFailed: "テンプレートの生成に失敗しました",
+      sheetNotFound: "シートが見つかりません — 先にプレビュー画面を開いてください。",
+      photoNotImage: "画像ファイル（JPEG／PNG）を選択してください。",
+      photoTooLarge: "写真が大きすぎます — 8MB未満の画像を使用してください。",
+      photoReadFailed: "画像を読み込めませんでした — 別のファイルをお試しください。",
+    },
+  },
+};
+
+/** Context so editor sub-components read the active language + copy. */
+interface EditorI18n {
+  lang: Lang;
+  copy: EditorCopy;
+}
+
+const EditorI18nContext = createContext<EditorI18n>({
+  lang: "en",
+  copy: EDITOR_COPY.en,
+});
+
+export const EditorI18nProvider = EditorI18nContext.Provider;
+
+export function useEditorI18n(): EditorI18n {
+  return useContext(EditorI18nContext);
+}

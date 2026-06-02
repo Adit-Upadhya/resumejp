@@ -8,12 +8,17 @@
  */
 
 .rirekisho-root {
-  font-family: var(--font-noto-jp), "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-family: var(
+    --sheet-font,
+    var(--font-noto-jp), "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif
+  );
+  font-weight: var(--sheet-weight, 400);
   color: #1a1a1a;
   font-size: 9pt;
   line-height: 1.35;
-  --border: 0.5pt solid #1a1a1a;
-  --border-thin: 0.3pt solid #1a1a1a;
+  /* Slightly darker + thicker rules so the grid reads clearly in preview/print. */
+  --border: 0.65pt solid #0a0a0a;
+  --border-thin: 0.45pt solid #0a0a0a;
 }
 
 /* Sheet — A3 landscape (420×297mm) */
@@ -82,8 +87,20 @@
   padding: 0.7mm 1.6mm;
   vertical-align: middle;
   background: #fff;
-  font-weight: normal;
+  /* Inherit the user-selected boldness; form-chrome labels are pinned below. */
+  font-weight: inherit;
   word-break: break-word;
+}
+
+/* Keep the fixed form labels/headers at a steady weight so only the
+   user-entered content responds to the boldness control. */
+.rirekisho-root .lbl,
+.rirekisho-root .lbl-sm,
+.rirekisho-root .lbl-gender,
+.rirekisho-root .postal,
+.rirekisho-root .hint,
+.rirekisho-root thead th {
+  font-weight: 400;
 }
 
 /* Identity table — top of LEFT column */
@@ -99,7 +116,9 @@
 .rirekisho-root .ident .lbl-sm {
   width: 22mm;
   background: #fafafa;
-  font-size: 7.5pt;
+  font-size: 7pt;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
   text-align: center;
 }
 .rirekisho-root .ident .ident-name-furi {
@@ -145,9 +164,15 @@
 .rirekisho-root .ident .same-as-above {
   font-size: 10pt;
 }
-.rirekisho-root .ident .cell-phone,
-.rirekisho-root .ident .cell-mail {
+.rirekisho-root .ident .cell-phone {
   font-size: 8.5pt;
+}
+/* Email gets the wide (two-column) cell, kept to a single line. */
+.rirekisho-root .ident .cell-mail {
+  font-size: 8pt;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .rirekisho-root .photo-cell {
   width: 30mm;
@@ -367,6 +392,8 @@
   display: inline-block;
   padding: 0;
   font-size: 8.5pt;
+  white-space: nowrap;
+  margin-right: 6mm;
 }
 .rirekisho-root.a4-root .ident .contact-line .lbl-sm {
   display: inline-block;
@@ -411,7 +438,10 @@
   width: 210mm;
   min-height: 297mm;
   padding: 14mm 14mm 12mm 14mm;
-  font-family: var(--font-noto-jp), "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-family: var(
+    --sheet-font,
+    var(--font-noto-jp), "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif
+  );
 }
 .rirekisho-root.modern-root .modern-header {
   display: flex;

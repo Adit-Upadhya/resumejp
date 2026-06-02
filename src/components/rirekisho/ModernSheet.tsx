@@ -10,15 +10,15 @@ import { formatDobJp, formatPostalCode } from "@/lib/utils";
  * Western CV while preserving the rirekisho data model.
  */
 
-export const ModernSheet = forwardRef<HTMLDivElement, { data: Resume }>(function ModernSheet(
-  { data },
-  ref,
-) {
+export const ModernSheet = forwardRef<
+  HTMLDivElement,
+  { data: Resume; styleVars?: React.CSSProperties }
+>(function ModernSheet({ data, styleVars }, ref) {
   const p = data.personal;
   const same = p.contactSameAsAbove;
 
   return (
-    <div ref={ref} className="rirekisho-root modern-root">
+    <div ref={ref} className="rirekisho-root modern-root" style={styleVars}>
       <section className="page page-a4 modern-page">
         <header className="modern-header">
           <div className="modern-header-text">

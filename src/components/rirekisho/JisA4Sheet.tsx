@@ -25,10 +25,10 @@ function emptyLicense(): LicenseEntry {
   return { id: "_", year: "", month: "", name: "" };
 }
 
-export const JisA4Sheet = forwardRef<HTMLDivElement, { data: Resume }>(function JisA4Sheet(
-  { data },
-  ref,
-) {
+export const JisA4Sheet = forwardRef<
+  HTMLDivElement,
+  { data: Resume; styleVars?: React.CSSProperties }
+>(function JisA4Sheet({ data, styleVars }, ref) {
   const p = data.personal;
   const same = p.contactSameAsAbove;
 
@@ -42,7 +42,7 @@ export const JisA4Sheet = forwardRef<HTMLDivElement, { data: Resume }>(function 
   const licenses = pad(data.licenses, LICENSE_ROWS, emptyLicense);
 
   return (
-    <div ref={ref} className="rirekisho-root a4-root">
+    <div ref={ref} className="rirekisho-root a4-root" style={styleVars}>
       <section className="page page-a4">
         <header className="page-head">
           <h1>履 歴 書</h1>
@@ -93,17 +93,17 @@ export const JisA4Sheet = forwardRef<HTMLDivElement, { data: Resume }>(function 
             </tr>
             <tr>
               <td className="lbl" rowSpan={2}>現住所</td>
-              <td colSpan={3} className="addr-cell">
+              <td colSpan={2} className="addr-cell">
                 <div className="postal">〒{formatPostalCode(p.postalCode)}</div>
                 <div className="addr">{p.address}</div>
               </td>
               <td className="lbl-sm">電話</td>
-              <td className="cell-phone">{p.phone}</td>
+              <td className="cell-phone" colSpan={2}>{p.phone}</td>
             </tr>
             <tr>
-              <td colSpan={3} />
+              <td colSpan={2} />
               <td className="lbl-sm">メール</td>
-              <td className="cell-mail">{p.email}</td>
+              <td className="cell-mail" colSpan={2}>{p.email}</td>
             </tr>
             <tr>
               <td className="lbl">連絡先</td>
