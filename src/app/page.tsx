@@ -113,7 +113,11 @@ export default function LandingPage() {
       <footer className="border-t">
         <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} Rirekisho Builder</span>
-          <span>Made for foreigners applying to jobs in Japan.</span>
+          <span>
+            <a href="https://www.digistartjp.com/" target="_blank" rel="noreferrer" className="underline hover:text-primary">
+              Designed by DIGI スタート！
+            </a>
+          </span>
         </div>
       </footer>
     </div>

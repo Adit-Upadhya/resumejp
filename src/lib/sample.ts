@@ -5,8 +5,8 @@ export function sampleResume(): Resume {
   return {
     documentDate: "2025年 1月 1日現在",
     personal: {
-      furiganaName: "すみす じょん",
-      fullName: "Smith John",
+      furiganaName: "ラム バハドゥル",
+      fullName: "RAM BAHADUR",
       dateOfBirth: "1990-01-01",
       age: "35",
       gender: "male",
@@ -16,7 +16,7 @@ export function sampleResume(): Resume {
       postalCode: "1020072",
       address: "東京都千代田区飯田橋４丁目９−４",
       phone: "090-0000-0000",
-      email: "johnsmith@example.com",
+      email: "rambahadur@example.com",
       furiganaContact: "",
       contactPostalCode: "",
       contactAddress: "",

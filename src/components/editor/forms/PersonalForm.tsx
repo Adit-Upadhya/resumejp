@@ -116,14 +116,14 @@ export function PersonalForm({ data, setData }: Props) {
             <Input
               value={p.fullName}
               onChange={(e) => update("fullName", e.target.value)}
-              placeholder="Smith John"
+              placeholder="RAM BAHADUR"
             />
           </Field>
           <Field label="Furigana (ふりがな)">
             <Input
               value={p.furiganaName}
               onChange={(e) => update("furiganaName", e.target.value)}
-              placeholder="すみす じょん"
+              placeholder="ラム バハドゥル"
             />
           </Field>
           <Field label="Date of birth (生年月日)">
