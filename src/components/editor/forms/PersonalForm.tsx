@@ -140,8 +140,9 @@ export function PersonalForm({ data, setData }: Props) {
 
   async function onPhotoChange(file: File) {
     // Hard cap on the source file so a huge upload can't lock up the browser
-    // or blow past the localStorage quota.
-    const MAX_FILE_BYTES = 8 * 1024 * 1024; // 8 MB
+    // or blow past the localStorage quota. The image is downscaled to a small
+    // photo cell anyway, so a conservative cap is plenty.
+    const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
     if (!file.type.startsWith("image/")) {
       toast.error(copy.toasts.photoNotImage);
       return;
