@@ -8,6 +8,7 @@ import {
   Shippori_Mincho,
 } from "next/font/google";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 import { FAQ_EN } from "@/lib/faq";
 import "./globals.css";
 
@@ -224,6 +225,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script dangerouslySetInnerHTML={{ __html: "(adsbygoogle = window.adsbygoogle || []).push({});" }} />
         <Toaster position="bottom-right" />
+        <Analytics />
       </body>
     </html>
   );
