@@ -213,6 +213,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans antialiased">
         <JsonLd />
         {children}
+        {/* ab */}
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-6450900255050645"
+          data-ad-slot="2684471291"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+        <script dangerouslySetInnerHTML={{ __html: "(adsbygoogle = window.adsbygoogle || []).push({});" }} />
         <Toaster position="bottom-right" />
       </body>
     </html>
