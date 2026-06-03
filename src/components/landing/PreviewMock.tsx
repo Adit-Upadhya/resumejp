@@ -89,22 +89,22 @@ export function PreviewMock({
   return (
     <div
       id="preview"
-      className="rounded-3xl border bg-gradient-to-b from-zinc-50 to-white p-6 sm:p-10 shadow-sm"
+      className="rounded-2xl sm:rounded-3xl border bg-gradient-to-b from-zinc-50 to-white p-4 sm:p-10 shadow-sm"
     >
-      <div className="mx-auto max-w-3xl text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">{copy.heading}</h2>
-        <p className="mt-2 text-muted-foreground">{copy.sub}</p>
+      <div className="mx-auto max-w-3xl text-center mb-5 sm:mb-8">
+        <h2 className="text-xl sm:text-3xl font-semibold tracking-tight">{copy.heading}</h2>
+        <p className="mt-2 text-sm sm:text-base text-muted-foreground">{copy.sub}</p>
       </div>
 
-      {/* Tab row */}
-      <div className="flex flex-wrap justify-center gap-2 mb-6">
+      {/* Tab row — 2×2 grid on mobile so all 4 tabs fit without wrapping/overflow */}
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 mb-5 sm:mb-6">
         {TEMPLATE_LIST.map((t) => {
           const isActive = t.key === active;
           return (
             <button
               key={t.key}
               onClick={() => setActive(t.key)}
-              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-all ${
+              className={`flex items-center justify-center gap-1.5 rounded-xl sm:rounded-full px-3 py-2.5 sm:px-4 sm:py-2 text-xs sm:text-sm transition-all touch-manipulation ${
                 isActive
                   ? "bg-zinc-900 text-white shadow-md"
                   : "bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50"
@@ -112,7 +112,7 @@ export function PreviewMock({
             >
               <span className="font-medium">{lang === "jp" ? t.jp : t.name}</span>
               <span
-                className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                className={`text-[9px] sm:text-[10px] uppercase tracking-wider px-1 sm:px-1.5 py-0.5 rounded ${
                   isActive ? "bg-white/20" : "bg-zinc-100"
                 }`}
               >
@@ -165,8 +165,8 @@ export function PreviewMock({
             {activeDescription}
           </p>
         </div>
-        <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button asChild size="lg">
+        <div className="mt-4 flex flex-col items-stretch sm:flex-row sm:items-center sm:justify-center gap-3">
+          <Button asChild size="lg" className="h-12 touch-manipulation">
             <Link href="/editor">
               {copy.use(activeName)}
               <ArrowRight className="h-4 w-4" />
@@ -177,7 +177,7 @@ export function PreviewMock({
             size="lg"
             onClick={handleDownloadBlank}
             disabled={busy}
-            className="gap-2"
+            className="gap-2 h-12 touch-manipulation"
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />

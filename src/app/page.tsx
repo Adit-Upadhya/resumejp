@@ -65,15 +65,15 @@ export default function LandingPage() {
       <Hero copy={c.hero} />
 
       {/* Feature grid */}
-      <section className="container py-20 sm:py-28">
+      <section className="container py-12 sm:py-20 lg:py-28 px-4">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+          <h2 className="text-xl sm:text-3xl font-semibold tracking-tight">
             {c.features.heading}
           </h2>
-          <p className="mt-3 text-muted-foreground">{c.features.sub}</p>
+          <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground">{c.features.sub}</p>
         </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 sm:mt-12 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {c.features.items.map((item, i) => (
             <FeatureCard
               key={i}
@@ -92,7 +92,7 @@ export default function LandingPage() {
       <ResumeTypes copy={c.resumeTypes} />
 
       {/* Preview mock */}
-      <section className="container pb-24">
+      <section className="container pb-12 sm:pb-24 px-4">
         <PreviewMock lang={lang} copy={c.preview} />
       </section>
 
@@ -100,12 +100,12 @@ export default function LandingPage() {
       <FaqSection copy={c.faq} />
 
       {/* CTA strip */}
-      <section className="container pb-28">
-        <div className="rounded-2xl border bg-gradient-to-br from-zinc-50 to-white p-10 sm:p-14 text-center shadow-sm">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">{c.cta.heading}</h2>
-          <p className="mt-3 text-muted-foreground max-w-xl mx-auto">{c.cta.sub}</p>
-          <div className="mt-6">
-            <Button asChild size="lg">
+      <section className="container pb-16 sm:pb-28 px-4">
+        <div className="rounded-2xl border bg-gradient-to-br from-zinc-50 to-white p-6 sm:p-14 text-center shadow-sm">
+          <h2 className="text-xl sm:text-3xl font-semibold tracking-tight">{c.cta.heading}</h2>
+          <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">{c.cta.sub}</p>
+          <div className="mt-5 sm:mt-6">
+            <Button asChild size="lg" className="h-12 w-full sm:w-auto touch-manipulation">
               <Link href="/editor">
                 {c.cta.button} <ArrowRight className="h-4 w-4" />
               </Link>
