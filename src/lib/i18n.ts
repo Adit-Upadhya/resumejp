@@ -16,6 +16,7 @@ export type Lang = "en" | "jp";
 
 export interface LandingCopy {
   nav: { editor: string; getStarted: string };
+  intro: { body: string };
   hero: {
     badge: string;
     titleLine1: string;
@@ -63,6 +64,9 @@ export interface LandingCopy {
 export const LANDING_COPY: Record<Lang, LandingCopy> = {
   en: {
     nav: { editor: "Editor", getStarted: "Get started" },
+    intro: {
+      body: "ResumeJP is a free online Japanese resume builder. Create a professional 履歴書 (rirekisho) or 職務経歴書 (shokumukeirekisho) for jobs in Japan — whether you are applying for a full-time position, a part-time or arubaito role, a career change, or a global tech company inside Tokyo. Fill in your details in English or Japanese, choose from JIS, MHLW, new-graduate, or mid-career formats, and download a print-ready A4 or A3 PDF in seconds. No account needed, no data stored on a server — everything stays in your browser.",
+    },
     hero: {
       badge: "English / 日本語 → Professional 日本語",
       titleLine1: "The Japanese resume,",
@@ -242,6 +246,9 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
   },
   jp: {
     nav: { editor: "エディター", getStarted: "始める" },
+    intro: {
+      body: "ResumeJPは無料で使えるオンラインの日本式履歴書作成ツールです。正社員・パートアルバイト・転職・新卒・派遣など、どんな職種の求人にも対応。JIS規格や厚生労働省様式をはじめ、英文履歴書まで幅広いテンプレートを用意しています。英語や日本語で入力するだけで、印刷用のPDF（A4・A3）をすぐにダウンロードできます。アカウント不要、個人情報はサーバーに保存されません。",
+    },
     hero: {
       badge: "英語・日本語・ネパール語 → きれいな日本語",
       titleLine1: "あなたの履歴書を、",

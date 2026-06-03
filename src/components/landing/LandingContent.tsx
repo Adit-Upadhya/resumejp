@@ -69,6 +69,14 @@ export function LandingContent() {
 
       <Hero copy={c.hero} />
 
+      {/* Keyword-rich intro paragraph — raises text-to-code ratio for SEO
+          crawlers while staying visually subtle below the fold. */}
+      <div className="container px-4 pb-2">
+        <p className="mx-auto max-w-3xl text-center text-xs sm:text-sm text-muted-foreground/70 leading-relaxed">
+          {c.intro.body}
+        </p>
+      </div>
+
       {/* Feature grid */}
       <section className="container py-12 sm:py-20 lg:py-28 px-4">
         <div className="mx-auto max-w-2xl text-center">

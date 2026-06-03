@@ -11,6 +11,8 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ["/preview", "/api/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
+    // Note: `host` is omitted — it is non-standard and causes validation
+    // errors in tools like SEOptimizer. Standard robots.txt only uses
+    // User-agent / Allow / Disallow / Crawl-delay / Sitemap.
   };
 }
