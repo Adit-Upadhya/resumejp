@@ -15,13 +15,27 @@ const isDev = process.env.NODE_ENV === "development";
  * styles emitted by next/font and framer-motion. `'unsafe-eval'` and the
  * websocket origin are only added in development for React Fast Refresh.
  */
+// Google AdSense requires a broad set of Google/ad-network origins.
+const adSenseDomains = [
+  "https://pagead2.googlesyndication.com",
+  "https://googleads.g.doubleclick.net",
+  "https://tpc.googlesyndication.com",
+  "https://adservice.google.com",
+  "https://www.googletagservices.com",
+  "https://fundingchoicesmessages.google.com",
+];
+
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  // AdSense loads scripts from multiple Google CDNs.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} ${adSenseDomains.join(" ")}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  // AdSense renders ads inside iframes served from these origins.
+  `frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com`,
+  // Ad images come from googleusercontent and other Google CDNs.
+  `img-src 'self' data: blob: https://*.googlesyndication.com https://*.google.com https://*.googleusercontent.com https://*.gstatic.com`,
   "font-src 'self' data:",
-  `connect-src 'self' https://zipcloud.ibsnet.co.jp${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self' https://zipcloud.ibsnet.co.jp ${adSenseDomains.join(" ")}${isDev ? " ws: wss:" : ""}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
