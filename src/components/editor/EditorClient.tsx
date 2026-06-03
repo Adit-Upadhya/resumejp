@@ -83,6 +83,7 @@ export function EditorClient() {
   const [data, setData, hydrated] = useLocalResume();
   const [template, setTemplate, tHydrated] = useTemplate();
   const [style, setStyle, sHydrated] = useSheetStyle();
+  const [showClearModal, setShowClearModal] = useState(false);
   const [lang, setLang, lHydrated] = useLang();
   const [stepKey, setStepKey] = useState<StepKey>("template");
   const [busy, setBusy] = useState<null | "translate" | "pdf" | "tex">(null);
@@ -218,7 +219,11 @@ export function EditorClient() {
   }
 
   function clearData() {
-    if (!window.confirm(t.toasts.clearConfirm)) return;
+    setShowClearModal(true);
+  }
+
+  function confirmClear() {
+    setShowClearModal(false);
     const empty = emptyResume();
     setData(empty);
     saveResume(empty);
@@ -236,6 +241,15 @@ export function EditorClient() {
     <EditorI18nProvider value={{ lang, copy: t }}>
     <div className="min-h-screen flex flex-col bg-zinc-50">
       <AnimatePresence>{busy === "pdf" && <PdfLoadingOverlay />}</AnimatePresence>
+      <AnimatePresence>
+        {showClearModal && (
+          <ClearConfirmModal
+            copy={t}
+            onConfirm={confirmClear}
+            onCancel={() => setShowClearModal(false)}
+          />
+        )}
+      </AnimatePresence>
       <Header
         onImport={importFile}
         onSample={loadSample}
@@ -783,6 +797,67 @@ function StyleControls({
         </div>
       </div>
     </div>
+  );
+}
+
+function ClearConfirmModal({
+  copy,
+  onConfirm,
+  onCancel,
+}: {
+  copy: import("@/lib/i18n").EditorCopy;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <motion.div
+      key="clear-modal"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onCancel}
+    >
+      <motion.div
+        initial={{ scale: 0.92, opacity: 0, y: 8 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.92, opacity: 0, y: 8 }}
+        transition={{ type: "spring", stiffness: 320, damping: 26 }}
+        className="w-full max-w-sm rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Icon */}
+        <div className="flex flex-col items-center px-6 pt-7 pb-5 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4">
+            <Eraser className="h-5 w-5 text-red-500" />
+          </div>
+          <h2 className="text-base font-semibold text-zinc-900">
+            {copy.toasts.clearConfirm.split("?")[0]}?
+          </h2>
+          <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+            {copy.toasts.clearConfirmDetail}
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-2 px-5 pb-5">
+          <Button
+            variant="outline"
+            className="flex-1 h-11 touch-manipulation"
+            onClick={onCancel}
+          >
+            {copy.toasts.clearCancel}
+          </Button>
+          <Button
+            className="flex-1 h-11 bg-red-500 hover:bg-red-600 text-white touch-manipulation border-0"
+            onClick={onConfirm}
+          >
+            {copy.toasts.clearOk}
+          </Button>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

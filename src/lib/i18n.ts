@@ -576,6 +576,9 @@ export interface EditorCopy {
     photoReadFailed: string;
     cleared: string;
     clearConfirm: string;
+    clearConfirmDetail: string;
+    clearCancel: string;
+    clearOk: string;
     pdfNoData: string;
   };
 }
@@ -691,7 +694,10 @@ export const EDITOR_COPY: Record<Lang, EditorCopy> = {
       templateDownloaded: "Blank template downloaded",
       templateFailed: "Failed to generate template",
       cleared: "Form cleared",
-      clearConfirm: "Clear all entered data? This cannot be undone.",
+      clearConfirm: "Clear all data?",
+      clearConfirmDetail: "This will erase everything you've entered. This cannot be undone.",
+      clearCancel: "Cancel",
+      clearOk: "Clear",
       pdfNoData:
         "Couldn't read that PDF. Import a PDF you downloaded from this app, or a .json backup.",
       sheetNotFound: "Sheet element not found — open the Preview step first.",
@@ -808,7 +814,10 @@ export const EDITOR_COPY: Record<Lang, EditorCopy> = {
       templateDownloaded: "空欄テンプレートをダウンロードしました",
       templateFailed: "テンプレートの生成に失敗しました",
       cleared: "フォームをクリアしました",
-      clearConfirm: "入力したデータをすべて消去しますか？元に戻せません。",
+      clearConfirm: "すべてのデータを消去しますか？",
+      clearConfirmDetail: "入力した内容がすべて消去されます。この操作は元に戻せません。",
+      clearCancel: "キャンセル",
+      clearOk: "消去する",
       pdfNoData:
         "このPDFを読み取れませんでした。このアプリでダウンロードしたPDF、またはJSONバックアップをインポートしてください。",
       sheetNotFound: "シートが見つかりません — 先にプレビュー画面を開いてください。",
