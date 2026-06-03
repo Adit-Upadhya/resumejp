@@ -210,8 +210,70 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6450900255050645"
           crossOrigin="anonymous"
         />
+        {/* Splash-screen styles — inline so they apply before any CSS chunk loads */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          #rj-splash{
+            position:fixed;inset:0;z-index:9999;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+            background:#fff;
+            animation:rj-hold 1.1s ease forwards,rj-fade 0.45s ease 1.1s forwards;
+            pointer-events:none;
+          }
+          #rj-splash-mark{
+            width:56px;height:56px;border-radius:16px;
+            background:#0a0a0a;
+            display:flex;align-items:center;justify-content:center;
+            color:#fff;font-size:30px;font-weight:800;font-family:sans-serif;
+            animation:rj-pop 0.5s cubic-bezier(.34,1.56,.64,1) both;
+          }
+          #rj-splash-name{
+            margin-top:14px;
+            font-family:sans-serif;font-size:17px;font-weight:600;
+            color:#0a0a0a;letter-spacing:-0.01em;
+            animation:rj-rise 0.45s ease 0.18s both;
+          }
+          #rj-splash-bar{
+            margin-top:28px;width:48px;height:3px;border-radius:99px;
+            background:#f0f0f0;overflow:hidden;
+            animation:rj-rise 0.45s ease 0.25s both;
+          }
+          #rj-splash-fill{
+            height:100%;border-radius:99px;background:#0a0a0a;
+            animation:rj-load 1s cubic-bezier(.4,0,.2,1) 0.3s both;
+          }
+          @keyframes rj-pop{
+            from{opacity:0;transform:scale(.7)}
+            to{opacity:1;transform:scale(1)}
+          }
+          @keyframes rj-rise{
+            from{opacity:0;transform:translateY(8px)}
+            to{opacity:1;transform:translateY(0)}
+          }
+          @keyframes rj-load{
+            from{width:0}
+            to{width:100%}
+          }
+          @keyframes rj-hold{
+            from{opacity:1}to{opacity:1}
+          }
+          @keyframes rj-fade{
+            from{opacity:1;transform:scale(1)}
+            to{opacity:0;transform:scale(1.03);visibility:hidden}
+          }
+        ` }} />
       </head>
       <body className="font-sans antialiased">
+        {/* Splash screen — pure HTML/CSS, visible before any JS or React runs.
+            The tiny inline script removes it from the DOM after the animation. */}
+        <div id="rj-splash" aria-hidden="true">
+          <div id="rj-splash-mark">R</div>
+          <div id="rj-splash-name">ResumeJP</div>
+          <div id="rj-splash-bar"><div id="rj-splash-fill" /></div>
+        </div>
+        <script dangerouslySetInnerHTML={{ __html:
+          `(function(){var s=document.getElementById('rj-splash');` +
+          `if(s){setTimeout(function(){s.remove();},1600);}})()`
+        }} />
         <JsonLd />
         {children}
         {/* ab */}
