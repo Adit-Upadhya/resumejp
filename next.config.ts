@@ -54,6 +54,7 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
   },
   { key: "X-DNS-Prefetch-Control", value: "on" },
+  { key: "Content-Language", value: "en, ja" },
   // HSTS only over real HTTPS — emitting it on http://localhost is pointless
   // and can wrongly pin local dev to https.
   ...(isDev

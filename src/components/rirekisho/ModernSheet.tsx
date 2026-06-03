@@ -23,7 +23,7 @@ export const ModernSheet = forwardRef<
         <header className="modern-header">
           <div className="modern-header-text">
             <div className="modern-furi">{p.furiganaName}</div>
-            <h1 className="modern-name">{p.fullName || "氏名"}</h1>
+            <div className="modern-name" role="heading" aria-level={1}>{p.fullName || "氏名"}</div>
             <div className="modern-meta">
               {formatDobJp(p.dateOfBirth) && <span>{formatDobJp(p.dateOfBirth)}</span>}
               {p.nationality && <span>{p.nationality}</span>}

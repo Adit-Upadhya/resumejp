@@ -74,36 +74,45 @@ const KEYWORDS = [
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Japanese Resume Builder — Free 履歴書 (Rirekisho) & 職務経歴書 Templates",
+    // ≤580px: "Japanese Resume Builder — Free 履歴書 & 職務経歴書" fits comfortably.
+    default: "Japanese Resume Builder — Free 履歴書 & Rirekisho Templates",
     template: "%s · ResumeJP",
   },
+  // ≤1000px (≈155 chars) — concise and keyword-rich.
   description:
-    "Create an authentic Japanese resume (履歴書 rirekisho) and work-history sheet (職務経歴書) online for free. JIS, MHLW, mid-career, new-grad, part-time, dispatch, and English CV templates — fill in any language and download a print-ready PDF for jobs in Japan.",
+    "Free Japanese resume (履歴書 rirekisho) builder. JIS, MHLW, new-grad, part-time & English CV templates. Fill in any language, download a print-ready PDF.",
   keywords: KEYWORDS,
   applicationName: SITE_NAME,
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
+  // hreflang: x-default + en + ja, each pointing to the canonical URL.
+  // Both language versions live at the same URL (client-side toggle), so
+  // x-default is the canonical and en/ja are self-referencing alternates.
   alternates: {
-    canonical: "/",
-    languages: { en: "/", ja: "/" },
+    canonical: `${SITE_URL}/`,
+    languages: {
+      "x-default": `${SITE_URL}/`,
+      en: `${SITE_URL}/`,
+      ja: `${SITE_URL}/`,
+    },
   },
   category: "productivity",
   openGraph: {
     type: "website",
-    url: SITE_URL,
+    url: `${SITE_URL}/`,
     siteName: SITE_NAME,
-    title: "Japanese Resume Builder — Free 履歴書 (Rirekisho) Templates & PDF",
+    title: "Japanese Resume Builder — Free 履歴書 Templates & PDF",
     description:
-      "Build a JIS-style Japanese resume (履歴書) and 職務経歴書 for full-time, part-time, new-grad, or career-change roles in Japan. Type in any language, export a print-ready PDF — free, no signup.",
+      "Build a JIS or MHLW rirekisho in any language and download a print-ready PDF. Free, no signup.",
     locale: "en_US",
     alternateLocale: ["ja_JP"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Japanese Resume Builder — Free 履歴書 (Rirekisho) Templates",
+    title: "Japanese Resume Builder — Free 履歴書 Templates",
     description:
-      "Authentic Japanese resume (履歴書) & 職務経歴書 templates. Fill in any language, download a print-ready PDF. Free, no signup.",
+      "Free 履歴書 & 職務経歴書 templates. Fill in any language, download a print-ready PDF.",
   },
   robots: {
     index: true,
@@ -204,6 +213,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${notoJp.variable} ${notoSerifJp.variable} ${bizGothic.variable} ${zenGothic.variable} ${shipporiMincho.variable}`}
     >
       <head>
+        {/* GEO targeting — tells crawlers this service targets Japan */}
+        <meta name="geo.region" content="JP" />
+        <meta name="geo.placename" content="Japan" />
+        <meta name="language" content="en, ja" />
+        <meta httpEquiv="content-language" content="en, ja" />
         <meta name="google-adsense-account" content="ca-pub-6450900255050645" />
         <script
           async

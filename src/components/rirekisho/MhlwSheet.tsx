@@ -47,7 +47,7 @@ export const MhlwSheet = forwardRef<
     <div ref={ref} className="rirekisho-root a4-root mhlw-root" style={styleVars}>
       <section className="page page-a4">
         <header className="page-head">
-          <h1>履 歴 書</h1>
+          <div className="rirekisho-h1" role="heading" aria-level={1}>履 歴 書</div>
           <div className="as-of">{data.documentDate}</div>
         </header>
 

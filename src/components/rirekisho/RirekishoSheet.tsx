@@ -79,7 +79,7 @@ export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function Rirekis
           {/* ============= LEFT COLUMN ============= */}
           <div className="col col-left">
             <header className="page-head">
-              <h1>履 歴 書</h1>
+              <div className="rirekisho-h1" role="heading" aria-level={1}>履 歴 書</div>
               <div className="as-of">{data.documentDate}</div>
             </header>
 
@@ -177,7 +177,7 @@ export const RirekishoSheet = forwardRef<HTMLDivElement, Props>(function Rirekis
             {/* Invisible spacer mirroring the LEFT page-head so both
                 column contents start at the same vertical position. */}
             <header className="page-head page-head-spacer" aria-hidden="true">
-              <h1>&nbsp;</h1>
+              <div className="rirekisho-h1">&nbsp;</div>
               <div className="as-of">&nbsp;</div>
             </header>
 
