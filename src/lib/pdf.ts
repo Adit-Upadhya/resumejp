@@ -1,6 +1,16 @@
 import type { Resume } from "./schema";
 import type { TemplateKey, TemplateMeta } from "./templates";
 import type { SheetStyle } from "./sheet-style";
+import { PDF_DATA_MARKER } from "./resume-pdf-data";
+
+/** Appends the re-import marker (resume JSON) to a generated PDF blob. */
+function withEmbeddedResume(blob: Blob, resume: Resume): Promise<Blob> {
+  return blob.arrayBuffer().then((buf) => {
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(resume))));
+    const marker = new TextEncoder().encode(`\n${PDF_DATA_MARKER}${b64}\n`);
+    return new Blob([buf, marker], { type: "application/pdf" });
+  });
+}
 
 function triggerDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -53,6 +63,7 @@ export async function downloadSheetPdf(
   el: HTMLElement,
   meta: TemplateMeta,
   filename: string,
+  embedResume?: Resume,
 ): Promise<void> {
   const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
     import("html2canvas"),
@@ -83,5 +94,6 @@ export async function downloadSheetPdf(
   const imgData = canvas.toDataURL("image/jpeg", 0.97);
   pdf.addImage(imgData, "JPEG", 0, 0, meta.widthMm, meta.heightMm);
 
-  triggerDownload(pdf.output("blob"), filename);
+  const blob = pdf.output("blob");
+  triggerDownload(embedResume ? await withEmbeddedResume(blob, embedResume) : blob, filename);
 }

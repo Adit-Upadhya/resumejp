@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ResumeSchema } from "@/lib/schema";
 import { TEMPLATES, type TemplateKey } from "@/lib/templates";
+import { PDF_DATA_MARKER } from "@/lib/resume-pdf-data";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -95,7 +96,14 @@ export async function POST(req: Request) {
       preferCSSPageSize: true,
     });
 
-    return new NextResponse(new Uint8Array(pdf), {
+    // Embed the resume so the PDF can be re-imported later (skip blanks).
+    let out = Buffer.from(pdf);
+    if (!(body as { blank?: boolean }).blank) {
+      const b64 = Buffer.from(json, "utf8").toString("base64");
+      out = Buffer.concat([out, Buffer.from(`\n${PDF_DATA_MARKER}${b64}\n`, "latin1")]);
+    }
+
+    return new NextResponse(new Uint8Array(out), {
       status: 200,
       headers: {
         "content-type": "application/pdf",

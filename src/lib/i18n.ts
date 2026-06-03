@@ -576,6 +576,7 @@ export interface EditorCopy {
     photoReadFailed: string;
     cleared: string;
     clearConfirm: string;
+    pdfNoData: string;
   };
 }
 
@@ -691,6 +692,8 @@ export const EDITOR_COPY: Record<Lang, EditorCopy> = {
       templateFailed: "Failed to generate template",
       cleared: "Form cleared",
       clearConfirm: "Clear all entered data? This cannot be undone.",
+      pdfNoData:
+        "Couldn't read that PDF. Import a PDF you downloaded from this app, or a .json backup.",
       sheetNotFound: "Sheet element not found — open the Preview step first.",
       photoNotImage: "Please choose an image file (JPEG or PNG).",
       photoTooLarge: "Photo is too large — please use an image under 5 MB.",
@@ -806,6 +809,8 @@ export const EDITOR_COPY: Record<Lang, EditorCopy> = {
       templateFailed: "テンプレートの生成に失敗しました",
       cleared: "フォームをクリアしました",
       clearConfirm: "入力したデータをすべて消去しますか？元に戻せません。",
+      pdfNoData:
+        "このPDFを読み取れませんでした。このアプリでダウンロードしたPDF、またはJSONバックアップをインポートしてください。",
       sheetNotFound: "シートが見つかりません — 先にプレビュー画面を開いてください。",
       photoNotImage: "画像ファイル（JPEG／PNG）を選択してください。",
       photoTooLarge: "写真が大きすぎます — 5MB未満の画像を使用してください。",

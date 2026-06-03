@@ -40,6 +40,7 @@ import {
 import { LangToggle } from "@/components/LangToggle";
 import { emptyResume } from "@/lib/schema";
 import { downloadSheetPdf, downloadServerPdf } from "@/lib/pdf";
+import { extractResumeFromPdfBytes, parseResumeJson } from "@/lib/resume-pdf-data";
 import { Sheet } from "@/components/rirekisho/Sheet";
 import { PersonalForm } from "./forms/PersonalForm";
 import { EducationForm } from "./forms/EducationForm";
@@ -124,7 +125,7 @@ export function EditorClient() {
       try {
         const el = document.querySelector<HTMLElement>("[data-sheet-capture]");
         if (!el) throw new Error(t.toasts.sheetNotFound);
-        await downloadSheetPdf(el, TEMPLATES[template], "rirekisho.pdf");
+        await downloadSheetPdf(el, TEMPLATES[template], "rirekisho.pdf", data);
         setDownloaded(true);
         toast.success(t.toasts.pdfDownloaded);
       } catch (e) {
@@ -163,17 +164,33 @@ export function EditorClient() {
     }
   }
 
-  function importJson() {
+  function importFile() {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "application/json";
+    input.accept = "application/pdf,application/json,.pdf,.json";
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
+      const isPdf =
+        file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
       try {
-        const json = JSON.parse(await file.text());
-        setData(json);
-        toast.success(t.toasts.imported);
+        if (isPdf) {
+          const restored = extractResumeFromPdfBytes(new Uint8Array(await file.arrayBuffer()));
+          if (restored) {
+            setData(restored);
+            toast.success(t.toasts.imported);
+          } else {
+            toast.error(t.toasts.pdfNoData);
+          }
+        } else {
+          const restored = parseResumeJson(await file.text());
+          if (restored) {
+            setData(restored);
+            toast.success(t.toasts.imported);
+          } else {
+            toast.error(t.toasts.invalidJson);
+          }
+        }
       } catch {
         toast.error(t.toasts.invalidJson);
       }
@@ -220,7 +237,7 @@ export function EditorClient() {
     <div className="min-h-screen flex flex-col bg-zinc-50">
       <AnimatePresence>{busy === "pdf" && <PdfLoadingOverlay />}</AnimatePresence>
       <Header
-        onImport={importJson}
+        onImport={importFile}
         onSample={loadSample}
         onClear={clearData}
         onTranslate={translateAll}
