@@ -1,48 +1,26 @@
 import type { Metadata } from "next";
-import {
-  Inter,
-  Noto_Sans_JP,
-  Noto_Serif_JP,
-  BIZ_UDPGothic,
-  Zen_Kaku_Gothic_New,
-  Shippori_Mincho,
-} from "next/font/google";
+import { Inter, Noto_Sans_JP } from "next/font/google";
+import Script from "next/script";
 import { Toaster } from "sonner";
 import { FAQ_EN } from "@/lib/faq";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+// Root layout loads ONLY the two fonts needed on every page (landing + public
+// routes). The additional 4 typefaces used in the editor's typography picker
+// are loaded in src/app/editor/layout.tsx so they don't delay the landing page.
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  preload: true,
+});
 const notoJp = Noto_Sans_JP({
   subsets: ["latin"],
   variable: "--font-noto-jp",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-const notoSerifJp = Noto_Serif_JP({
-  subsets: ["latin"],
-  variable: "--font-noto-serif-jp",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-// Additional Japanese typefaces the user can switch between in the preview.
-const bizGothic = BIZ_UDPGothic({
-  subsets: ["latin"],
-  variable: "--font-biz-gothic",
-  display: "swap",
-  weight: ["400", "700"],
-});
-const zenGothic = Zen_Kaku_Gothic_New({
-  subsets: ["latin"],
-  variable: "--font-zen-gothic",
-  display: "swap",
-  weight: ["400", "500", "700"],
-});
-const shipporiMincho = Shippori_Mincho({
-  subsets: ["latin"],
-  variable: "--font-shippori",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],  // regular + semibold — enough for landing + sheet body
+  preload: true,
 });
 
 const SITE_URL = "https://www.resumejp.com";
@@ -210,7 +188,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${notoJp.variable} ${notoSerifJp.variable} ${bizGothic.variable} ${zenGothic.variable} ${shipporiMincho.variable}`}
+      className={`${inter.variable} ${notoJp.variable}`}
     >
       <head>
         {/* GEO targeting — tells crawlers this service targets Japan */}
@@ -219,18 +197,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="language" content="en, ja" />
         <meta httpEquiv="content-language" content="en, ja" />
         <meta name="google-adsense-account" content="ca-pub-6450900255050645" />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6450900255050645"
-          crossOrigin="anonymous"
-        />
         {/* Splash-screen styles — inline so they apply before any CSS chunk loads */}
         <style dangerouslySetInnerHTML={{ __html: `
           #rj-splash{
             position:fixed;inset:0;z-index:9999;
             display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
             background:#fff;
-            animation:rj-hold 1.1s ease forwards,rj-fade 0.45s ease 1.1s forwards;
+            animation:rj-hold 0.6s ease forwards,rj-fade 0.4s ease 0.6s forwards;
             pointer-events:none;
           }
           #rj-splash-mark{
@@ -253,7 +226,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
           #rj-splash-fill{
             height:100%;border-radius:99px;background:#0a0a0a;
-            animation:rj-load 1s cubic-bezier(.4,0,.2,1) 0.3s both;
+            animation:rj-load 0.5s cubic-bezier(.4,0,.2,1) 0.12s both;
           }
           @keyframes rj-pop{
             from{opacity:0;transform:scale(.7)}
@@ -286,11 +259,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
         <script dangerouslySetInnerHTML={{ __html:
           `(function(){var s=document.getElementById('rj-splash');` +
-          `if(s){setTimeout(function(){s.remove();},1600);}})()`
+          `if(s){setTimeout(function(){s.remove();},1100);}})()`
         }} />
         <JsonLd />
         {children}
-        {/* ab */}
+        <Toaster position="bottom-right" />
+        <Analytics />
+        {/* AdSense — lazyOnload so it never blocks the critical render path. */}
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6450900255050645"
+          strategy="lazyOnload"
+          crossOrigin="anonymous"
+        />
         <ins
           className="adsbygoogle"
           style={{ display: "block" }}
@@ -299,9 +279,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           data-ad-format="auto"
           data-full-width-responsive="true"
         />
-        <script dangerouslySetInnerHTML={{ __html: "(adsbygoogle = window.adsbygoogle || []).push({});" }} />
-        <Toaster position="bottom-right" />
-        <Analytics />
+        <Script
+          id="adsense-init"
+          strategy="lazyOnload"
+          dangerouslySetInnerHTML={{ __html: "(adsbygoogle = window.adsbygoogle || []).push({});" }}
+        />
       </body>
     </html>
   );
