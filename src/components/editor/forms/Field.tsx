@@ -31,14 +31,14 @@ export function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border bg-white p-5 lg:p-6 shadow-sm">
-      <header className="mb-5">
-        <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+    <section className="rounded-xl border bg-white p-4 sm:p-5 lg:p-6 shadow-sm">
+      <header className="mb-4 sm:mb-5">
+        <h2 className="text-base sm:text-lg font-semibold tracking-tight">{title}</h2>
         {description && (
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{description}</p>
         )}
       </header>
-      <div className="space-y-4">{children}</div>
+      <div className="space-y-3 sm:space-y-4">{children}</div>
     </section>
   );
 }

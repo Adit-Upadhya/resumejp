@@ -40,21 +40,24 @@ export function EducationForm({ data, setData }: Props) {
         addLabel={c.add}
         empty={<EmptyHint>{c.empty}</EmptyHint>}
         renderItem={(item, update) => (
-          <div className="grid grid-cols-12 gap-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <Input
+                className="w-24 shrink-0"
+                placeholder="2008"
+                inputMode="numeric"
+                value={item.year}
+                onChange={(e) => update({ year: e.target.value })}
+              />
+              <Input
+                className="w-16 shrink-0"
+                placeholder="4"
+                inputMode="numeric"
+                value={item.month}
+                onChange={(e) => update({ month: e.target.value })}
+              />
+            </div>
             <Input
-              className="col-span-3"
-              placeholder="2008"
-              value={item.year}
-              onChange={(e) => update({ year: e.target.value })}
-            />
-            <Input
-              className="col-span-2"
-              placeholder="4"
-              value={item.month}
-              onChange={(e) => update({ month: e.target.value })}
-            />
-            <Input
-              className="col-span-7"
               placeholder="○○高等学校 卒業"
               value={item.content}
               onChange={(e) => update({ content: e.target.value })}

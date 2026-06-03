@@ -248,7 +248,7 @@ export function EditorClient() {
 
       <Stepper currentIndex={stepIndex} onJump={jumpTo} />
 
-      <main className={`flex-1 ${isPreview ? "" : "px-4 lg:px-8 py-8"}`}>
+      <main className={`flex-1 ${isPreview ? "" : "px-3 sm:px-4 lg:px-8 py-4 sm:py-8"}`}>
         {isPreview ? (
           <PreviewStep
             data={data}
@@ -285,12 +285,12 @@ export function EditorClient() {
               </motion.div>
             </AnimatePresence>
 
-            <div className="mt-8 flex items-center justify-between">
+            <div className="mt-6 sm:mt-8 flex items-center justify-between gap-2">
               <Button
                 variant="outline"
                 onClick={() => go(-1)}
                 disabled={isFirst}
-                className="gap-2"
+                className="gap-2 h-11 px-4 sm:px-6 touch-manipulation"
               >
                 <ArrowLeft className="h-4 w-4" />
                 {t.nav.back}
@@ -300,7 +300,7 @@ export function EditorClient() {
                 {t.nav.stepOf(stepIndex + 1, STEPS.length)}
               </div>
 
-              <Button onClick={() => go(1)} disabled={isLast} className="gap-2">
+              <Button onClick={() => go(1)} disabled={isLast} className="gap-2 h-11 px-4 sm:px-6 touch-manipulation">
                 {stepIndex === STEPS.length - 2 ? t.nav.review : t.nav.next}
                 <ArrowRight className="h-4 w-4" />
               </Button>

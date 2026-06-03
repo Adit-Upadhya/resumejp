@@ -39,25 +39,26 @@ export function RowList<T extends { id: string }>({
           >
             <div className="flex items-start gap-2">
               {onMove && (
-                <div className="flex flex-col gap-0.5 pt-1 text-muted-foreground">
+                <div className="flex flex-col gap-0.5 pt-2 text-muted-foreground">
                   <button
                     aria-label="move up"
-                    className="hover:text-foreground disabled:opacity-30"
+                    className="p-1 hover:text-foreground disabled:opacity-30 touch-manipulation"
                     disabled={i === 0}
                     onClick={() => onMove(i, i - 1)}
                   >
-                    <GripVertical className="h-3.5 w-3.5 rotate-180" />
+                    <GripVertical className="h-4 w-4 rotate-180" />
                   </button>
                 </div>
               )}
-              <div className="flex-1">{renderItem(item, (patch) => onUpdate(item.id, patch))}</div>
+              <div className="flex-1 min-w-0">{renderItem(item, (patch) => onUpdate(item.id, patch))}</div>
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={() => onRemove(item.id)}
                 aria-label="Remove row"
+                className="h-10 w-10 shrink-0 touch-manipulation text-muted-foreground hover:text-destructive hover:bg-red-50"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </motion.div>
