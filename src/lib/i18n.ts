@@ -64,7 +64,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
   en: {
     nav: { editor: "Editor", getStarted: "Get started" },
     hero: {
-      badge: "English / 日本語 / नेपाली → Professional 日本語",
+      badge: "English / 日本語 → Professional 日本語",
       titleLine1: "The Japanese resume,",
       titleLine2: "written for you.",
       subtitle:
