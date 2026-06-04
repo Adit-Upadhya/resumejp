@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Toaster } from "sonner";
 import { FAQ_EN } from "@/lib/faq";
 import { Analytics } from "@vercel/analytics/next";
+import { AdSenseSlot } from "@/components/AdSenseSlot";
 import "./globals.css";
 
 // Root layout loads ONLY the two fonts needed on every page (landing + public
@@ -271,19 +272,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="lazyOnload"
           crossOrigin="anonymous"
         />
-        <ins
-          className="adsbygoogle"
-          style={{ display: "block" }}
-          data-ad-client="ca-pub-6450900255050645"
-          data-ad-slot="2684471291"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
-        <Script
-          id="adsense-init"
-          strategy="lazyOnload"
-          dangerouslySetInnerHTML={{ __html: "(window.adsbygoogle = window.adsbygoogle || []).push({});" }}
-        />
+        {/* AdSenseSlot renders the <ins> imperatively via useEffect so AdSense's
+            injected iframe never conflicts with React's reconciliation. */}
+        <AdSenseSlot client="ca-pub-6450900255050645" slot="2684471291" />
       </body>
     </html>
   );
