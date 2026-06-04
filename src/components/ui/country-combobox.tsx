@@ -96,7 +96,7 @@ export function CountryCombobox({ value, onChange, placeholder = "Select or type
               onChange(v); // allow free-typing too
             }}
           />
-          <CommandList>
+          <CommandList className="max-h-48 overflow-y-auto">
             <CommandEmpty>
               <span className="text-muted-foreground">No match — keeping &quot;{inputValue}&quot;</span>
             </CommandEmpty>
