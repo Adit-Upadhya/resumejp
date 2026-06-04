@@ -1,10 +1,16 @@
 "use client";
 
 import { useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { Camera, Trash2, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
+const CountryCombobox = dynamic(
+  () => import("@/components/ui/country-combobox").then((m) => m.CountryCombobox),
+  { ssr: false },
+);
 import {
   Select,
   SelectContent,
@@ -207,10 +213,9 @@ export function PersonalForm({ data, setData }: Props) {
             </Select>
           </Field>
           <Field label={c.nationality} className="sm:col-span-2">
-            <Input
+            <CountryCombobox
               value={p.nationality}
-              onChange={(e) => update("nationality", e.target.value)}
-              placeholder="アメリカ / Nepal / 日本 ..."
+              onChange={(v) => update("nationality", v)}
             />
           </Field>
         </div>
