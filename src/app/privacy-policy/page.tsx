@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy · ResumeJP",
+  title: "Privacy Policy",
   description:
     "Privacy Policy for ResumeJP, including local browser storage, resume preview handling, and Google AdSense ads.",
+  alternates: { canonical: "/privacy-policy" },
 };
 
 export default function PrivacyPolicyPage() {

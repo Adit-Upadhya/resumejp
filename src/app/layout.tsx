@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
 import { Toaster } from "sonner";
@@ -49,6 +49,12 @@ const KEYWORDS = [
   "転職 履歴書",
   "rirekisho PDF",
 ];
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0a0a0a",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -204,8 +210,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             position:fixed;inset:0;z-index:9999;
             display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
             background:#fff;
-            animation:rj-hold 0.6s ease forwards,rj-fade 0.4s ease 0.6s forwards;
             pointer-events:none;
+          }
+          #rj-splash.rj-hide{
+            animation:rj-fade 0.4s ease forwards;
           }
           #rj-splash-mark{
             width:56px;height:56px;border-radius:16px;
@@ -241,9 +249,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             from{width:0}
             to{width:100%}
           }
-          @keyframes rj-hold{
-            from{opacity:1}to{opacity:1}
-          }
           @keyframes rj-fade{
             from{opacity:1;transform:scale(1)}
             to{opacity:0;transform:scale(1.03);visibility:hidden}
@@ -252,15 +257,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans antialiased">
         {/* Splash screen — pure HTML/CSS, visible before any JS or React runs.
-            The tiny inline script removes it from the DOM after the animation. */}
+            The inline script fades it out once the page has actually finished
+            loading (min 650ms so the animation reads, max 2.5s so a slow asset
+            can never trap the visitor), then removes it from the DOM. */}
         <div id="rj-splash" aria-hidden="true">
           <div id="rj-splash-mark">R</div>
           <div id="rj-splash-name">ResumeJP</div>
           <div id="rj-splash-bar"><div id="rj-splash-fill" /></div>
         </div>
+        <noscript>
+          <style dangerouslySetInnerHTML={{ __html: `#rj-splash{display:none}` }} />
+        </noscript>
         <script dangerouslySetInnerHTML={{ __html:
-          `(function(){var s=document.getElementById('rj-splash');` +
-          `if(s){setTimeout(function(){s.remove();},1100);}})()`
+          `(function(){var s=document.getElementById('rj-splash');if(!s)return;` +
+          `var t0=Date.now(),done=false;` +
+          `function hide(){if(done)return;done=true;` +
+          `var wait=Math.max(0,650-(Date.now()-t0));` +
+          `setTimeout(function(){s.className='rj-hide';` +
+          `setTimeout(function(){s.remove();},450);},wait);}` +
+          `if(document.readyState==='complete'){hide();}` +
+          `else{window.addEventListener('load',hide);}` +
+          `setTimeout(hide,2500);})()`
         }} />
         <JsonLd />
         {children}
