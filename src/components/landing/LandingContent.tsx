@@ -53,6 +53,12 @@ export function LandingContent() {
           <nav className="flex items-center gap-2 text-sm">
             <LangToggle lang={lang} onChange={setLang} />
             <Link
+              href="/templates"
+              className="hidden sm:block text-muted-foreground hover:text-foreground px-2"
+            >
+              {lang === "jp" ? "テンプレート" : "Templates"}
+            </Link>
+            <Link
               href="/editor"
               className="hidden sm:block text-muted-foreground hover:text-foreground px-2"
             >
@@ -131,6 +137,21 @@ export function LandingContent() {
         <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} Rirekisho Builder</span>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <Link href="/templates" className="underline hover:text-primary">
+              Resume Templates
+            </Link>
+            <Link
+              href="/guide/how-to-write-a-japanese-resume"
+              className="underline hover:text-primary"
+            >
+              How to Write a 履歴書
+            </Link>
+            <Link
+              href="/guide/rirekisho-vs-shokumukeirekisho"
+              className="underline hover:text-primary"
+            >
+              履歴書 vs 職務経歴書
+            </Link>
             <Link href="/privacy-policy" className="underline hover:text-primary">
               Privacy Policy
             </Link>
