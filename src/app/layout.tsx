@@ -259,12 +259,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Splash screen — pure HTML/CSS, visible before any JS or React runs.
             The inline script fades it out once the page has actually finished
             loading (min 650ms so the animation reads, max 2.5s so a slow asset
-            can never trap the visitor), then removes it from the DOM. */}
-        <div id="rj-splash" aria-hidden="true">
-          <div id="rj-splash-mark">R</div>
-          <div id="rj-splash-name">ResumeJP</div>
-          <div id="rj-splash-bar"><div id="rj-splash-fill" /></div>
-        </div>
+            can never trap the visitor), then removes it from the DOM.
+            The splash lives inside a dangerouslySetInnerHTML host so React
+            never reconciles its children — on slow devices hydration can
+            finish AFTER the script has removed the splash, and a React-owned
+            node vanishing mid-hydration throws (React 19 treats any mismatch
+            as an error → "Application error" screen). The host div itself is
+            never touched by the script, so hydration always matches. */}
+        <div
+          id="rj-splash-host"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html:
+            `<div id="rj-splash" aria-hidden="true">` +
+            `<div id="rj-splash-mark">R</div>` +
+            `<div id="rj-splash-name">ResumeJP</div>` +
+            `<div id="rj-splash-bar"><div id="rj-splash-fill"></div></div>` +
+            `</div>`
+          }}
+        />
         <noscript>
           <style dangerouslySetInnerHTML={{ __html: `#rj-splash{display:none}` }} />
         </noscript>

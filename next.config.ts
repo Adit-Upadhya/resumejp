@@ -23,6 +23,10 @@ const adSenseDomains = [
   "https://adservice.google.com",
   "https://www.googletagservices.com",
   "https://fundingchoicesmessages.google.com",
+  // Ad-quality / anti-fraud ("sodar") checks — blocked requests here degrade
+  // ad serving and spam the console with CSP violations.
+  "https://ep1.adtrafficquality.google",
+  "https://ep2.adtrafficquality.google",
 ];
 
 const csp = [
@@ -31,9 +35,9 @@ const csp = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} ${adSenseDomains.join(" ")}`,
   "style-src 'self' 'unsafe-inline'",
   // AdSense renders ads inside iframes served from these origins.
-  `frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com`,
+  `frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google`,
   // Ad images come from googleusercontent and other Google CDNs.
-  `img-src 'self' data: blob: https://*.googlesyndication.com https://*.google.com https://*.googleusercontent.com https://*.gstatic.com`,
+  `img-src 'self' data: blob: https://*.googlesyndication.com https://*.google.com https://*.googleusercontent.com https://*.gstatic.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google`,
   "font-src 'self' data:",
   `connect-src 'self' https://zipcloud.ibsnet.co.jp ${adSenseDomains.join(" ")}${isDev ? " ws: wss:" : ""}`,
   "object-src 'none'",
