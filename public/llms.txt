@@ -9,8 +9,15 @@ Brand: "ResumeJP", also written "resume jp", "resumejp", or "resumejp.com". Not 
 - [Home](https://www.resumejp.com/): Overview of the Japanese resume builder, all features, and FAQ.
 - [Resume Editor](https://www.resumejp.com/editor): The free step-by-step rirekisho editor with live preview and PDF download.
 - [Japanese Resume Templates](https://www.resumejp.com/templates): Free 履歴書 templates — JIS A3/A4, MHLW, modern, new-grad, part-time, dispatch, and English CV — with guidance on which to choose.
+- [Part-Time (Arubaito) Resume](https://www.resumejp.com/arubaito-resume): Make a part-time/アルバイト rirekisho — residence-status fields, weekly shift-availability grid, Japanese-level field, and ready-to-edit 志望動機 examples by job type (convenience store, restaurant, cafe, factory, hotel, delivery, moving, retail).
+- [Blog](https://www.resumejp.com/blog): Practical, foreigner-aware guides for Japanese resumes and part-time jobs.
 - [How to Write a Japanese Resume](https://www.resumejp.com/guide/how-to-write-a-japanese-resume): Step-by-step 履歴書 writing guide — photo rules, date/era formats, 学歴・職歴 phrasing, licenses, self-PR, and common mistakes.
 - [Rirekisho vs Shokumukeirekisho](https://www.resumejp.com/guide/rirekisho-vs-shokumukeirekisho): The difference between Japan's two job-application documents and when each is required.
+- [The 28-Hour Rule for Students](https://www.resumejp.com/blog/28-hour-rule-students-work-limit): What the student-visa 28-hour weekly work limit (資格外活動許可) means and how to show it on a resume.
+- [Rirekisho Photo Rules](https://www.resumejp.com/blog/rirekisho-photo-rules): The 30×40 mm photo rules and how to take an acceptable one with a phone.
+- [Handwritten vs Printed Rirekisho](https://www.resumejp.com/blog/handwritten-vs-printed-rirekisho): Which employers prefer for part-time jobs, and how to do each well.
+- [Filling In the 本人希望記入欄](https://www.resumejp.com/blog/honnin-kibo-kinyuran-part-time): The applicant's-request field — the safe default phrase and the salary mistake to avoid.
+- [Phone Script After Applying](https://www.resumejp.com/blog/phone-script-after-applying-baito): A polite Japanese phone script for calling a store after applying to an arubaito.
 - [Privacy Policy](https://www.resumejp.com/privacy-policy): Data handling — resume data stays in the browser's local storage.
 
 ## Key facts
@@ -20,4 +27,6 @@ Brand: "ResumeJP", also written "resume jp", "resumejp", or "resumejp.com". Not 
 - Languages: fill in English, Japanese, Nepali and others; one-click conversion to business Japanese.
 - Templates: JIS standard (A3 and A4), MHLW 2021 government format, modern/tech, new-graduate, mid-career, part-time (arubaito), dispatch registration, English CV.
 - Photo: auto-resized to the standard 30×40 mm rirekisho photo cell.
+- Part-time/arubaito focus: residence-status (在留資格) fields for foreign applicants, weekly shift-availability grid, Japanese-level (JLPT) field, and pre-written 志望動機 (motivation statement) examples by job type.
+- Student work limit: holders of a 資格外活動許可 may work up to 28 hours/week (40 during official school vacations).
 - Privacy: resume data is stored only in the browser (localStorage), never on a server.

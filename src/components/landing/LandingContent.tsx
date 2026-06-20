@@ -60,6 +60,18 @@ export function LandingContent() {
               {lang === "jp" ? "テンプレート" : "Templates"}
             </Link>
             <Link
+              href="/arubaito-resume"
+              className="hidden sm:block text-muted-foreground hover:text-foreground px-2"
+            >
+              {lang === "jp" ? "バイト" : "Part-time"}
+            </Link>
+            <Link
+              href="/blog"
+              className="hidden sm:block text-muted-foreground hover:text-foreground px-2"
+            >
+              {lang === "jp" ? "ブログ" : "Blog"}
+            </Link>
+            <Link
               href="/editor"
               className="hidden sm:block text-muted-foreground hover:text-foreground px-2"
             >
@@ -146,6 +158,12 @@ export function LandingContent() {
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <Link href="/templates" className="underline hover:text-primary">
               Resume Templates
+            </Link>
+            <Link href="/arubaito-resume" className="underline hover:text-primary">
+              Part-Time Resume
+            </Link>
+            <Link href="/blog" className="underline hover:text-primary">
+              Blog
             </Link>
             <Link
               href="/guide/how-to-write-a-japanese-resume"
