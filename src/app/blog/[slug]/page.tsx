@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { MarketingShell } from "@/components/marketing/MarketingShell";
+import { EditorialShell, Eyebrow } from "@/components/editorial/EditorialShell";
 import { POSTS, getPost } from "@/lib/blog";
 
 const SITE_URL = "https://www.resumejp.com";
@@ -88,50 +87,50 @@ export default async function BlogPostPage({
   const { Body } = post;
 
   return (
-    <MarketingShell>
+    <EditorialShell>
       <JsonLd slug={slug} />
-      <article>
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> All guides
-        </Link>
 
-        <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="rounded-full bg-zinc-100 px-2 py-0.5 font-medium">{post.category}</span>
-          <span>·</span>
-          <span>{post.readingTime}</span>
-        </div>
+      <Link
+        href="/blog"
+        className="font-mono text-[0.7rem] uppercase tracking-[0.15em] text-[var(--ink-soft)] hover:text-[var(--seal)]"
+      >
+        ← All guides
+      </Link>
 
-        <h1 className="mt-3 text-2xl sm:text-4xl font-semibold tracking-tight leading-tight">
+      <article className="mt-6">
+        <Eyebrow>
+          {post.category} · {post.readingTime}
+        </Eyebrow>
+        <h1 className="mt-4 font-display text-[1.95rem] sm:text-[2.6rem] font-medium leading-[1.12] tracking-tight text-[var(--ink)]">
           {post.title}
         </h1>
-        <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed">
+        <p className="mt-5 border-l-2 border-[var(--seal)] pl-4 text-[0.98rem] sm:text-[1.08rem] leading-[1.7] text-[var(--ink-soft)]">
           {post.description}
         </p>
 
-        <div className="mt-2">
+        <div className="editorial-prose mt-8 pl-5 sm:pl-7">
           <Body />
         </div>
       </article>
 
-      <section className="mt-14 border-t pt-8">
-        <h2 className="text-lg font-semibold tracking-tight">More guides</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      {/* Continue reading — ruled cells. */}
+      <section className="mt-16 border-t border-[var(--rule)] pt-8">
+        <Eyebrow>Keep reading</Eyebrow>
+        <div className="mt-5 grid gap-px overflow-hidden border border-[var(--rule)] bg-[var(--rule)] sm:grid-cols-3">
           {more.map((p) => (
             <Link
               key={p.slug}
               href={`/blog/${p.slug}`}
-              className="block rounded-xl border bg-white p-4 transition-colors hover:border-primary/40"
+              className="group flex min-h-[7rem] flex-col justify-between bg-[var(--cell)] p-4 transition-colors hover:bg-[var(--paper)]"
             >
-              <span className="text-sm font-medium leading-snug hover:text-primary">
+              <span className="eyebrow text-[var(--seal)]">{p.category}</span>
+              <span className="mt-3 font-display text-[0.98rem] leading-snug text-[var(--ink)] group-hover:text-[var(--seal)]">
                 {p.cardTitle}
               </span>
             </Link>
           ))}
         </div>
       </section>
-    </MarketingShell>
+    </EditorialShell>
   );
 }

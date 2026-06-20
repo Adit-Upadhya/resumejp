@@ -28,22 +28,20 @@ export interface BlogPost {
   Body: () => ReactNode;
 }
 
-// Shared prose primitives — mirror the styling of the /guide pages.
+// Shared prose primitives. Visuals come from the scoped `.editorial-prose`
+// rules in globals.css (serif headings with a seal ○ marker, em-dash list
+// markers, seal-underlined links); these just set rhythm and sizing.
 const H2 = ({ children }: { children: ReactNode }) => (
-  <h2 className="mt-10 text-xl sm:text-2xl font-semibold tracking-tight">{children}</h2>
+  <h2 className="mt-12 text-[1.35rem] sm:text-[1.6rem] leading-snug tracking-tight">{children}</h2>
 );
 const P = ({ children }: { children: ReactNode }) => (
-  <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">{children}</p>
+  <p className="mt-4 text-[0.95rem] sm:text-[1.03rem] leading-[1.8]">{children}</p>
 );
 const UL = ({ children }: { children: ReactNode }) => (
-  <ul className="mt-3 space-y-2 text-sm sm:text-base text-muted-foreground leading-relaxed list-disc pl-5">
-    {children}
-  </ul>
+  <ul className="mt-4 space-y-2.5 text-[0.95rem] sm:text-[1.03rem] leading-[1.7]">{children}</ul>
 );
 const A = ({ href, children }: { href: string; children: ReactNode }) => (
-  <Link href={href} className="underline hover:text-primary">
-    {children}
-  </Link>
+  <Link href={href}>{children}</Link>
 );
 
 export const POSTS: BlogPost[] = [

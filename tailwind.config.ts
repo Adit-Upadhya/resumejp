@@ -15,6 +15,17 @@ export default {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         jp: ["var(--font-noto-jp)", "Noto Sans JP", "Hiragino Sans", "sans-serif"],
         jpserif: ["var(--font-noto-serif-jp)", "Noto Serif JP", "Hiragino Mincho ProN", "serif"],
+        // Editorial surface (blog + part-time): a literary Latin serif paired
+        // with a Japanese Mincho, plus a mono utility face for form-field
+        // labels and furigana-style annotations. Loaded only on those routes.
+        display: [
+          "var(--font-newsreader)",
+          "var(--font-noto-serif-jp)",
+          "Hiragino Mincho ProN",
+          "Georgia",
+          "serif",
+        ],
+        mono: ["var(--font-plex-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

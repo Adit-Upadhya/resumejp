@@ -41,6 +41,120 @@
   }
 }
 
+/* ── Editorial surface (blog + part-time landing) ────────────────────────
+   A self-contained visual identity scoped under .editorial so it never
+   leaks into the homepage, editor, templates, or guide pages. Evokes the
+   world of the Japanese form (履歴書): warm form-paper, hairline rules,
+   furigana-style mono labels, and a single seal-vermilion accent. */
+.editorial {
+  --paper: #fbfaf6;
+  --cell: #ffffff;
+  --ink: #14110e;
+  --ink-soft: #6f6a62;
+  --rule: #b8b1a3; /* structural hairline */
+  --rule-faint: #ece6da; /* ruled form-paper lines */
+  --seal: #c0402e; /* hanko vermilion — used in tiny doses only */
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+/* Faint horizontal ruling like a Japanese form / writing sheet. */
+.editorial-paper {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 31px,
+    var(--rule-faint) 31px,
+    var(--rule-faint) 32px
+  );
+}
+
+/* Mono field-label / furigana annotation. */
+.eyebrow {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.66rem;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+
+.editorial a:focus-visible,
+.editorial button:focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Article prose on the editorial surface. The blog body primitives render
+   plain h2/p/ul; these rules give them the form aesthetic without touching
+   each article's content. Section headings get a seal ○ tick in the margin. */
+.editorial-prose > p,
+.editorial-prose > ul,
+.editorial-prose > ol {
+  color: var(--ink-soft);
+}
+.editorial-prose ul {
+  list-style: none;
+  padding-left: 0;
+}
+.editorial-prose ul > li {
+  position: relative;
+  padding-left: 1.4em;
+}
+.editorial-prose ul > li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--seal);
+}
+.editorial-prose h2 {
+  position: relative;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.editorial-prose h2::before {
+  content: "○";
+  position: absolute;
+  left: -1.35em;
+  top: 0.12em;
+  font-size: 0.62em;
+  color: var(--seal);
+}
+@media (max-width: 640px) {
+  .editorial-prose h2::before {
+    left: 0;
+    top: -1.4em;
+    font-size: 0.7em;
+  }
+}
+.editorial-prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.editorial-prose a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--seal);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+.editorial-prose a:hover {
+  color: var(--seal);
+}
+.editorial-prose .font-jp {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 /* Premium subtle background grid used on the landing page */
 .bg-grid {
   background-image:

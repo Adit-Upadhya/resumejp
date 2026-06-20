@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { MarketingShell } from "@/components/marketing/MarketingShell";
+import { EditorialShell, Eyebrow } from "@/components/editorial/EditorialShell";
 import { POSTS } from "@/lib/blog";
 
 const SITE_URL = "https://www.resumejp.com";
@@ -68,48 +67,61 @@ function JsonLd() {
 
 export default function BlogIndex() {
   return (
-    <MarketingShell>
+    <EditorialShell>
       <JsonLd />
-      <div>
-        <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight">
-          ResumeJP Blog
-          <span className="block mt-1 text-lg sm:text-2xl text-muted-foreground font-normal">
-            Practical guides for Japanese resumes & part-time jobs
-          </span>
+
+      <header>
+        <Eyebrow>ブログ · Field notes</Eyebrow>
+        <h1 className="mt-4 font-display text-4xl sm:text-5xl font-medium leading-[1.05] tracking-tight text-[var(--ink)]">
+          Guides for the
+          <br />
+          Japanese job hunt
         </h1>
-        <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed">
+        <p className="mt-5 max-w-xl text-[0.95rem] sm:text-base leading-[1.75] text-[var(--ink-soft)]">
           Honest, foreigner-aware advice for writing a rirekisho (履歴書) and getting hired for
           part-time work (アルバイト) in Japan — the exact questions people search for right before
           they apply. Every guide links into the free{" "}
-          <Link href="/editor" className="underline hover:text-primary">
+          <Link
+            href="/editor"
+            className="text-[var(--ink)] underline decoration-[var(--seal)] decoration-[1.5px] underline-offset-[3px] hover:text-[var(--seal)]"
+          >
             resume editor
           </Link>
           .
         </p>
+      </header>
 
-        <div className="mt-8 space-y-4">
-          {POSTS.map((p) => (
-            <Link
-              key={p.slug}
-              href={`/blog/${p.slug}`}
-              className="group block rounded-2xl border bg-white p-5 sm:p-6 transition-colors hover:border-primary/40"
-            >
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="rounded-full bg-zinc-100 px-2 py-0.5 font-medium">{p.category}</span>
-                <span>·</span>
-                <span>{p.readingTime}</span>
-              </div>
-              <h2 className="mt-2 text-base sm:text-lg font-semibold tracking-tight group-hover:text-primary">
+      {/* Index — each guide is a ruled form row. */}
+      <div className="mt-12 border-t border-[var(--rule)]">
+        {POSTS.map((p) => (
+          <Link
+            key={p.slug}
+            href={`/blog/${p.slug}`}
+            className="group grid grid-cols-1 gap-1 border-b border-[var(--rule)] py-6 sm:grid-cols-[8.5rem_1fr] sm:gap-6"
+          >
+            <div className="flex items-center gap-2 sm:flex-col sm:items-start sm:gap-2 sm:pt-1">
+              <span className="eyebrow text-[var(--seal)]">{p.category}</span>
+              <span className="font-mono text-[0.66rem] uppercase tracking-[0.12em] text-[var(--ink-soft)]">
+                {p.readingTime}
+              </span>
+            </div>
+            <div>
+              <h2 className="font-display text-xl sm:text-[1.45rem] font-medium leading-snug tracking-tight text-[var(--ink)] transition-colors group-hover:text-[var(--seal)]">
                 {p.title}
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{p.description}</p>
-              <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
-                Read guide <ArrowRight className="h-3.5 w-3.5" />
+              <p className="mt-2 text-[0.92rem] leading-relaxed text-[var(--ink-soft)]">
+                {p.description}
+              </p>
+              <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.15em] text-[var(--ink)]">
+                Read
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                  →
+                </span>
               </span>
-            </Link>
-          ))}
-        </div>
+            </div>
+          </Link>
+        ))}
       </div>
-    </MarketingShell>
+    </EditorialShell>
   );
 }
