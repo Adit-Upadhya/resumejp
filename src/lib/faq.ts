@@ -36,7 +36,7 @@ export const FAQ_EN: { q: string; a: string }[] = [
   },
   {
     q: "Is my data private?",
-    a: "Yes. Everything runs in your browser — your resume is saved to local storage on your own device and is never stored on a server. Close the tab and it's gone.",
+    a: "Yes. Everything runs in your browser — your resume is saved on this device and is never sent to or stored on a server. It stays saved when you close the tab, so you can come back any time, and you can download a JSON backup to move it to another device.",
   },
   {
     q: "Does it work for part-time (arubaito) and dispatch jobs?",
