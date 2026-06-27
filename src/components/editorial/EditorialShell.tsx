@@ -114,8 +114,12 @@ export function EditorialShell({ children }: { children: ReactNode }) {
               { href: "/blog", label: "Blog" },
               { href: "/templates", label: "Templates" },
               { href: "/guide/how-to-write-a-japanese-resume", label: "Writing guide" },
+              { href: "/about", label: "About" },
+              { href: "/contact", label: "Contact" },
               { href: "/editor", label: "Open editor" },
               { href: "/privacy-policy", label: "Privacy" },
+              { href: "/terms", label: "Terms" },
+              { href: "/disclaimer", label: "Disclaimer" },
             ].map((l) => (
               <Link
                 key={l.href}

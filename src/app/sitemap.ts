@@ -26,12 +26,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       images: [og("/")],
     },
     {
-      url: `${SITE_URL}/editor`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
       url: `${SITE_URL}/templates`,
       lastModified: now,
       changeFrequency: "monthly",
@@ -68,7 +62,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
       images: [og("/guide/rirekisho-vs-shokumukeirekisho")],
     },
     {
+      url: `${SITE_URL}/about`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${SITE_URL}/contact`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.4,
+    },
+    {
       url: `${SITE_URL}/privacy-policy`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${SITE_URL}/terms`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${SITE_URL}/disclaimer`,
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,

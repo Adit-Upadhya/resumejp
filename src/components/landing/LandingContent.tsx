@@ -177,8 +177,20 @@ export function LandingContent() {
             >
               履歴書 vs 職務経歴書
             </Link>
+            <Link href="/about" className="underline hover:text-primary">
+              About
+            </Link>
+            <Link href="/contact" className="underline hover:text-primary">
+              Contact
+            </Link>
             <Link href="/privacy-policy" className="underline hover:text-primary">
               Privacy Policy
+            </Link>
+            <Link href="/terms" className="underline hover:text-primary">
+              Terms
+            </Link>
+            <Link href="/disclaimer" className="underline hover:text-primary">
+              Disclaimer
             </Link>
             <a
               href="https://www.digistartjp.com/"

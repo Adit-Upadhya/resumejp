@@ -18,7 +18,11 @@ Brand: "ResumeJP", also written "resume jp", "resumejp", or "resumejp.com". Not 
 - [Handwritten vs Printed Rirekisho](https://www.resumejp.com/blog/handwritten-vs-printed-rirekisho): Which employers prefer for part-time jobs, and how to do each well.
 - [Filling In the 本人希望記入欄](https://www.resumejp.com/blog/honnin-kibo-kinyuran-part-time): The applicant's-request field — the safe default phrase and the salary mistake to avoid.
 - [Phone Script After Applying](https://www.resumejp.com/blog/phone-script-after-applying-baito): A polite Japanese phone script for calling a store after applying to an arubaito.
+- [About](https://www.resumejp.com/about): Who builds ResumeJP (the DIGI スタート! studio), the mission, and how the free tool is supported.
+- [Contact](https://www.resumejp.com/contact): Reach the team by email (digistartnp@gmail.com) for resume questions, corrections, features, or partnerships.
 - [Privacy Policy](https://www.resumejp.com/privacy-policy): Data handling — resume data stays in the browser's local storage.
+- [Terms of Service](https://www.resumejp.com/terms): Acceptable use, intellectual property, advertising, and limitation of liability.
+- [Disclaimer](https://www.resumejp.com/disclaimer): General information only — not legal, immigration, or employment advice.
 
 ## Key facts
 

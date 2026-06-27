@@ -123,6 +123,52 @@ export const POSTS: BlogPost[] = [
           <A href="/editor">editor</A>.
         </P>
 
+        <H2>What counts toward your 28 hours</H2>
+        <P>
+          The cap counts <em>actual hours worked</em>, including paid training and any paid breaks,
+          across every job you hold. A few points that catch people out:
+        </P>
+        <UL>
+          <li>
+            <strong>Two jobs are added together.</strong> 15 hours at a konbini plus 15 at a
+            restaurant is 30 — over the limit, even though each job alone is under it.
+          </li>
+          <li>
+            <strong>The week does not reset by employer.</strong> Immigration looks at your total
+            weekly hours, not each contract separately.
+          </li>
+          <li>
+            <strong>Unpaid, genuine breaks do not count</strong>, but paid standby or paid training
+            does. When in doubt, count it.
+          </li>
+          <li>
+            <strong>Excluded workplaces never qualify</strong>, no matter the hours — bars, pachinko
+            parlours, and other adult-entertainment businesses are off-limits on a student permit.
+          </li>
+        </UL>
+
+        <H2>What happens if you go over</H2>
+        <P>
+          Exceeding 28 hours is unauthorised work. The realistic risk is not an on-the-spot fine but
+          a problem the next time you deal with immigration: a visa extension or a change of status
+          can be refused if your records show you worked beyond the limit, and in serious or repeated
+          cases it can affect your ability to stay in Japan. Employers know this too, which is why a
+          responsible store manager will keep your hours inside the cap. Treat the limit as a hard
+          line, not a target — and if a manager pushes you to work more &ldquo;off the books,&rdquo;
+          that is a red flag for you, not just for them.
+        </P>
+
+        <H2>When the rule does not apply to you</H2>
+        <P>
+          The 28-hour rule is tied to the student and dependent statuses. If you hold a work visa
+          such as 技術・人文知識・国際業務, a 特定技能 status, 永住者 (permanent resident),
+          定住者, or 日本人の配偶者等, you are not bound by the 28-hour cap (though work visas have
+          their own scope rules about <em>what kind</em> of work you may do). On a part-time resume,
+          the key is to state your actual status accurately — see{" "}
+          <A href="/arubaito-resume">the part-time resume guide</A> for how each status appears on
+          the sheet.
+        </P>
+
         <H2>Quick checklist before you apply for a baito</H2>
         <UL>
           <li>Do you hold a valid 資格外活動許可? (Check the back of your residence card.)</li>
@@ -215,12 +261,55 @@ export const POSTS: BlogPost[] = [
           and white. Use the photo-quality setting so your picture stays sharp.
         </P>
 
+        <H2>Editing: what is fine and what is not</H2>
+        <P>
+          Light, honest editing is acceptable; anything that changes how you actually look is not.
+        </P>
+        <UL>
+          <li>
+            <strong>Fine:</strong> cropping to 30×40 mm, straightening, gently correcting brightness
+            or colour balance, and replacing a slightly uneven wall with a clean white or pale-blue
+            background.
+          </li>
+          <li>
+            <strong>Not fine:</strong> beauty filters, skin smoothing, reshaping your face, changing
+            hair or eye colour, or anything that makes the photo not match the person at the
+            interview.
+          </li>
+        </UL>
+        <P>
+          The test is simple: when you walk into the interview, the manager should immediately
+          recognise you from the photo. A picture that oversells reads as dishonest the moment you
+          arrive.
+        </P>
+
+        <H2>Digital photos and the &ldquo;My Number&rdquo; style</H2>
+        <P>
+          If a job asks you to upload a photo rather than print one, the same composition rules apply.
+          Save it as a clear JPEG or PNG, keep the 3:4 ratio (e.g. 600×800 px or larger), and avoid
+          heavy compression that blurs your face. Many convenience-store machines and ID-photo booths
+          also sell a digital copy alongside the prints, which is handy when you apply both online and
+          on paper. In ResumeJP you upload the photo once and it is placed at the correct size for
+          every template you export.
+        </P>
+
+        <H2>Where the photo goes, and attaching it</H2>
+        <P>
+          On the rirekisho the photo sits in the box at the top right, next to your name and date of
+          birth. For a printed sheet you handwrite or print your name on the back of the physical
+          photo before attaching it, in case it comes loose, and use a glue stick rather than tape or
+          staples. With ResumeJP the photo is printed directly into the sheet, so there is nothing to
+          glue — but if you hand-fill a blank template, this small detail still matters to tidy
+          employers.
+        </P>
+
         <H2>Common photo mistakes</H2>
         <UL>
           <li>A busy or coloured background (bedroom, street, curtains).</li>
           <li>A cropped selfie at arm&apos;s length — the angle and distance look informal.</li>
           <li>Casual clothing such as a t-shirt or hoodie.</li>
           <li>An old photo that no longer looks like you.</li>
+          <li>A low-resolution image that prints blurry or pixelated.</li>
         </UL>
         <P>
           Once your photo is sorted, walk through the rest of the sheet with our{" "}
@@ -299,11 +388,39 @@ export const POSTS: BlogPost[] = [
           <li>Use plain white paper; the traditional layout prints on A3 folded, or two A4 pages.</li>
           <li>Sign or stamp where required, and double-check the photo printed sharply.</li>
         </UL>
+
+        <H2>What about an emailed PDF?</H2>
+        <P>
+          More and more part-time roles never ask for paper at all — you apply through Townwork,
+          Indeed, or a store&apos;s LINE and send a PDF. In that case &ldquo;handwritten vs
+          printed&rdquo; is moot: a typed PDF is expected. Name the file clearly (for example,
+          <em> rirekisho_yourname.pdf</em>), keep it under a few megabytes so it sends easily, and
+          double-check it opens correctly on a phone, since that is how the manager will first see
+          it.
+        </P>
+
+        <H2>A 30-second decision</H2>
+        <UL>
+          <li>Ad says 手書き希望 → handwrite.</li>
+          <li>Applying online or by email → typed PDF.</li>
+          <li>Small, traditional, older owner → handwriting can score points.</li>
+          <li>Chain, modern, or web/IT company → typed is expected.</li>
+          <li>Not confident writing Japanese by hand → typed is the safer choice.</li>
+        </UL>
+
+        <H2>What matters far more than the medium</H2>
+        <P>
+          Hiring managers rarely reject a candidate purely for typing instead of writing. What
+          actually decides a part-time application is whether the important fields are right: an
+          accurate, readable shift-availability grid; correct dates; your residence status and work
+          permission stated clearly; and a short, honest 志望動機 that names this specific store.
+          Get those right and the format is a footnote.
+        </P>
         <P>
           The fastest reliable route is to build it once and export a print-ready PDF — pick a
           layout on the <A href="/templates">templates page</A> or start straight away in the{" "}
-          <A href="/editor">editor</A>. Either way, the content matters far more than the medium:
-          accurate dates, a clear shift grid, and a short honest 志望動機.
+          <A href="/editor">editor</A>. For the shift grid and motivation samples, see the{" "}
+          <A href="/arubaito-resume">part-time resume guide</A>.
         </P>
       </>
     ),
@@ -369,6 +486,43 @@ export const POSTS: BlogPost[] = [
           do so politely at the interview. Likewise, avoid listing many conditions — each one is a
           reason the manager might pass.
         </P>
+
+        <H2>Ready-to-use lines for common situations</H2>
+        <P>Copy the closest one and adjust the specifics:</P>
+        <UL>
+          <li>
+            <strong>Student, evenings and weekends:</strong>{" "}
+            平日は17時以降、土日は終日勤務可能です。学業を優先したいため、週3〜4日を希望します。
+          </li>
+          <li>
+            <strong>Can start after a date:</strong> ○月○日以降より勤務を開始できます。
+          </li>
+          <li>
+            <strong>Prefer a particular store/area:</strong>{" "}
+            自宅から近い○○店での勤務を希望いたします。
+          </li>
+          <li>
+            <strong>Genuinely flexible:</strong> 勤務日・時間については貴社の規定に従います。
+          </li>
+        </UL>
+
+        <H2>Part-time vs full-time use of this field</H2>
+        <P>
+          For full-time roles the 本人希望記入欄 is almost always just 「貴社の規定に従います。」 —
+          stating conditions can look demanding. Part-time work is the one case where a short,
+          concrete note about your availability is genuinely useful, because shift fit is the whole
+          point of the hire. Even so, keep it to one or two lines; the detailed day-by-day picture
+          belongs in the{" "}
+          <A href="/arubaito-resume">shift-availability grid of the part-time template</A>.
+        </P>
+
+        <H2>Things never to put here</H2>
+        <UL>
+          <li>A desired hourly wage or salary negotiation.</li>
+          <li>A long list of conditions — each one is a reason to pass on you.</li>
+          <li>Complaints about a previous employer.</li>
+          <li>&ldquo;特になし&rdquo; left as the whole answer when you actually do have a constraint.</li>
+        </UL>
 
         <H2>A quick decision guide</H2>
         <UL>
@@ -455,6 +609,34 @@ export const POSTS: BlogPost[] = [
           <strong>かしこまりました</strong> (understood). Write your script on paper and read it the
           first few times; it is completely normal.
         </P>
+
+        <H2>If they are busy or you reach voicemail</H2>
+        <P>
+          If the person who answers says the manager is out, do not push — ask when to call back:
+          「採用ご担当者さまは何時頃お戻りでしょうか。改めてお電話いたします。」
+          (&ldquo;Around what time will the person in charge be back? I&apos;ll call again.&rdquo;)
+          Then call at that time. If you get a recorded message, it is usually better to hang up and
+          try again later than to leave a long voicemail in nervous Japanese — but if you do leave
+          one, keep it to your name, the job, and that you will call back.
+        </P>
+
+        <H2>If the position is already filled</H2>
+        <P>
+          Stay gracious — Japan&apos;s part-time world is small and managers remember politeness:
+          「承知いたしました。ご丁寧にありがとうございます。また機会がありましたらよろしくお願いいたします。」
+          (&ldquo;Understood. Thank you for your time. I hope we might have the chance another
+          time.&rdquo;) A good impression on a &ldquo;no&rdquo; call sometimes turns into a callback
+          weeks later when someone quits.
+        </P>
+
+        <H2>Mini phrase glossary</H2>
+        <UL>
+          <li>お世話になっております — standard polite opener once you are in contact.</li>
+          <li>採用ご担当者さま — the person in charge of hiring.</li>
+          <li>募集はまだされていますか — &ldquo;Are you still hiring?&rdquo;</li>
+          <li>履歴書を持参いたします — &ldquo;I will bring my resume.&rdquo;</li>
+          <li>何卒よろしくお願いいたします — a warm, formal closing.</li>
+        </UL>
 
         <H2>After the call</H2>
         <UL>
