@@ -24,9 +24,11 @@ export default function PrivacyPolicyPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Information you enter</h2>
           <p className="text-muted-foreground leading-7">
-            ResumeJP is designed so you can draft a Japanese resume directly in your browser. The
-            editor saves your resume data locally in your browser so you can continue working
-            without creating an account.
+            ResumeJP is designed so you can draft a Japanese resume directly in your browser, with no
+            account. The information you type stays in your browser&apos;s memory only while the page
+            is open — we do not store your resume on your device. When you reload or close the tab,
+            the editor resets to a blank sample, so your personal details are not retained. To keep
+            your work, download the finished PDF or a JSON backup you can re-import later.
           </p>
         </section>
 

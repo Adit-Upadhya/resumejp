@@ -16,12 +16,12 @@ import {
   Home,
   Loader2,
   MoreVertical,
-  Save,
+  ShieldCheck,
   Type,
   Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocalResume, saveResume } from "@/lib/storage";
+import { useLocalResume } from "@/lib/storage";
 import { TEMPLATES, type TemplateKey } from "@/lib/templates";
 import { useTemplate } from "@/lib/templates-hook";
 import {
@@ -224,17 +224,13 @@ export function EditorClient() {
 
   function confirmClear() {
     setShowClearModal(false);
-    const empty = emptyResume();
-    setData(empty);
-    saveResume(empty);
+    setData(emptyResume());
     toast.success(t.toasts.cleared);
   }
 
   function returnHome() {
     // Returning home after a download starts a fresh resume.
-    const empty = emptyResume();
-    setData(empty);
-    saveResume(empty);
+    setData(emptyResume());
   }
 
   return (
@@ -361,7 +357,7 @@ function Header({
           <span className="font-jp mr-1.5">履歴書</span>Builder
         </span>
         <span className="ml-1 hidden lg:inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-          <Save className="h-3 w-3" /> {copy.header.autosaved}
+          <ShieldCheck className="h-3 w-3" /> {copy.header.autosaved}
         </span>
       </div>
       <div className="flex items-center gap-1 sm:gap-2">

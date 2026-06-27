@@ -62,9 +62,10 @@ export default function TermsPage() {
         <h2 className={H2}>2. Your content</h2>
         <p className={P}>
           You retain all rights to the information you enter (your name, history, photo, and other
-          resume data). Because the Service runs in your browser and stores your data locally on your
-          device, you are responsible for keeping your own backups. We do not claim ownership of your
-          resume content. See our{" "}
+          resume data). The Service runs entirely in your browser and does not save your resume — it
+          resets when you reload or close the tab — so you are responsible for keeping your own
+          backups by downloading the PDF or a JSON file. We do not claim ownership of your resume
+          content. See our{" "}
           <Link href="/privacy-policy" className="underline hover:text-primary">
             privacy policy
           </Link>{" "}

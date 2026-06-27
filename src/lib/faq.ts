@@ -36,7 +36,7 @@ export const FAQ_EN: { q: string; a: string }[] = [
   },
   {
     q: "Is my data private?",
-    a: "Yes. Everything runs in your browser — your resume is saved on this device and is never sent to or stored on a server. It stays saved when you close the tab, so you can come back any time, and you can download a JSON backup to move it to another device.",
+    a: "Yes — completely. Everything runs in your browser, nothing you type is ever sent to a server, and we do not even save it on your device. Reload or close the tab and the editor resets to a blank sample, so your personal details never linger anywhere. To keep your work, download the finished PDF (or a JSON backup you can re-import later).",
   },
   {
     q: "Does it work for part-time (arubaito) and dispatch jobs?",

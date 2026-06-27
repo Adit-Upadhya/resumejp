@@ -75,7 +75,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
         "Build a JIS-style 履歴書 that matches the format Japanese employers actually expect. Fill it out in any language, get a polished PDF in Japanese.",
       ctaPrimary: "Start your rirekisho",
       ctaSecondary: "See the preview",
-      fineprint: "Free · No signup · Your data stays in your browser",
+      fineprint: "Free · No signup · Nothing saved — fully private",
     },
     features: {
       heading: "Everything you need to apply in Japan",
@@ -257,7 +257,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
         "日本の企業が実際に求めるJIS規格の履歴書を作成。どの言語で入力しても、整った日本語のPDFが手に入ります。",
       ctaPrimary: "履歴書を作成する",
       ctaSecondary: "プレビューを見る",
-      fineprint: "無料 · 登録不要 · データはブラウザ内に保存",
+      fineprint: "無料 · 登録不要 · データは保存されません",
     },
     features: {
       heading: "日本での就職に必要なすべて",
@@ -420,7 +420,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
       items: [
         {
           q: "ResumeJPは無料ですか？",
-          a: "はい、完全無料です。登録もメールも不要。データはブラウザ内に保存され、印刷用PDFをすぐにダウンロードできます。",
+          a: "はい、完全無料です。登録もメールも不要。入力した内容はどこにも保存されず、印刷用PDFをすぐにダウンロードできます。",
         },
         {
           q: "履歴書と職務経歴書の違いは何ですか？",
@@ -444,7 +444,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
         },
         {
           q: "データのプライバシーは守られますか？",
-          a: "はい。すべてブラウザ内で動作します。履歴書はご自身の端末のローカルストレージに保存され、サーバーには一切保存されません。タブを閉じればデータは消えます。",
+          a: "はい。すべてブラウザ内で動作し、入力内容がサーバーに送られることはありません。端末にも保存されず、再読み込みやタブを閉じると内容はリセットされます。保存したい場合はPDFやJSONとしてダウンロードしてください。",
         },
         {
           q: "アルバイトや派遣にも使えますか？",
@@ -594,7 +594,7 @@ export const EDITOR_COPY: Record<Lang, EditorCopy> = {
   en: {
     header: {
       home: "Home",
-      autosaved: "Autosaved",
+      autosaved: "Private · not saved",
       loadSample: "Load sample",
       clear: "Clear",
       import: "Import",
@@ -716,7 +716,7 @@ export const EDITOR_COPY: Record<Lang, EditorCopy> = {
   jp: {
     header: {
       home: "ホーム",
-      autosaved: "自動保存",
+      autosaved: "プライベート · 保存なし",
       loadSample: "サンプルを読み込む",
       clear: "クリア",
       import: "インポート",
