@@ -18,6 +18,14 @@ Brand: "ResumeJP", also written "resume jp", "resumejp", or "resumejp.com". Not 
 - [Handwritten vs Printed Rirekisho](https://www.resumejp.com/blog/handwritten-vs-printed-rirekisho): Which employers prefer for part-time jobs, and how to do each well.
 - [Filling In the 本人希望記入欄](https://www.resumejp.com/blog/honnin-kibo-kinyuran-part-time): The applicant's-request field — the safe default phrase and the salary mistake to avoid.
 - [Phone Script After Applying](https://www.resumejp.com/blog/phone-script-after-applying-baito): A polite Japanese phone script for calling a store after applying to an arubaito.
+- [Writing 自己PR (Self-PR)](https://www.resumejp.com/blog/how-to-write-jiko-pr-self-pr): The claim-proof-relevance structure for the self-PR box, with editable examples.
+- [Writing 学歴・職歴](https://www.resumejp.com/blog/gakureki-shokureki-education-work-history): Education and work-history conventions, including overseas schools and jobs.
+- [JLPT Levels Explained](https://www.resumejp.com/blog/jlpt-levels-which-do-you-need): What N1–N5 mean and which Japanese level different jobs expect.
+- [Residence Status on Your Resume](https://www.resumejp.com/blog/zairyu-shikaku-residence-status-resume): The common 在留資格 types and exactly how to show them on a rirekisho.
+- [Printing at a Convenience Store](https://www.resumejp.com/blog/print-rirekisho-convenience-store): Printing your resume PDF at 7-Eleven, FamilyMart, or Lawson.
+- [令和 vs Western Dates](https://www.resumejp.com/blog/japanese-era-dates-reiwa-resume): The Japanese era calendar and keeping dates consistent on a resume.
+- [Emailing Your Rirekisho](https://www.resumejp.com/blog/email-rirekisho-japanese-etiquette): Japanese email etiquette and a copy-paste application-email template.
+- [Part-Time Interview Questions](https://www.resumejp.com/blog/part-time-interview-questions-baito): The questions arubaito managers ask and honest ways to answer them.
 - [About](https://www.resumejp.com/about): Who builds ResumeJP (the DIGI スタート! studio), the mission, and how the free tool is supported.
 - [Contact](https://www.resumejp.com/contact): Reach the team by email (digistartnp@gmail.com) for resume questions, corrections, features, or partnerships.
 - [Privacy Policy](https://www.resumejp.com/privacy-policy): Data handling — resume data stays in the browser's local storage.
