@@ -90,6 +90,14 @@ export function EditorClient() {
   const [downloaded, setDownloaded] = useState(false);
   const t = EDITOR_COPY[lang];
 
+  // Deep-link support: /editor?template=<key> pre-selects a layout (used by the
+  // templates gallery). Runs once on mount; the URL wins over any prior choice.
+  useEffect(() => {
+    const key = new URLSearchParams(window.location.search).get("template");
+    if (key && key in TEMPLATES) setTemplate(key as TemplateKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!hydrated || !tHydrated || !sHydrated || !lHydrated) {
     return (
       <div className="flex h-screen items-center justify-center">
